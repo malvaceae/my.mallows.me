@@ -1,48 +1,19 @@
-'use client';
-
-// Amplify - Utilities
-import { I18n } from 'aws-amplify/utils';
-
-// Amplify - UI React
-import {
-  Authenticator,
-  AuthenticatorProps,
-  Heading,
-  translations,
-  useTheme,
-} from '@aws-amplify/ui-react';
-
-// Amplify - UI React - Styles
-import '@aws-amplify/ui-react/styles.css';
+// Next.js
+import type { Metadata } from 'next';
 
 // Styles
 import '@/app/globals.css';
 
-// 日本語対応
-I18n.putVocabularies(translations);
-I18n.setLanguage('ja');
+// Themes
+import { ThemeProvider } from '@/components/theme-provider';
 
-// 認証コンポーネントのカスタマイズ
-const components: AuthenticatorProps['components'] = {
-  SignIn: {
-    Header() {
-      const { tokens } = useTheme();
+// Amplify - UI React
+import { AmplifyLayout } from '@/components/amplify-layout';
 
-      return (
-        <Heading
-          level={3}
-          paddingTop={tokens.space.xl}
-          textAlign='center'
-        >
-          my.mallows.me
-        </Heading>
-      );
-    },
-    Footer() {
-      return null;
-    },
-  },
-};
+// メタデータ
+export const metadata = {
+  title: 'my.mallows.me',
+} satisfies Metadata;
 
 // ルートレイアウト
 export default function RootLayout({
@@ -51,15 +22,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ja">
+    <html lang='ja' suppressHydrationWarning>
       <body>
-        <Authenticator
-          className='min-h-screen'
-          components={components}
-          hideSignUp
+        <ThemeProvider
+          attribute='class'
+          defaultTheme='system'
+          disableTransitionOnChange
+          enableSystem
         >
-          {children}
-        </Authenticator>
+          <AmplifyLayout>
+            {children}
+          </AmplifyLayout>
+        </ThemeProvider>
       </body>
     </html>
   );
