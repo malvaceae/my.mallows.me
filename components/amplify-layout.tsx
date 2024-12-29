@@ -9,6 +9,9 @@ import {
 // Next.js - Themes
 import { useTheme } from 'next-themes';
 
+// Amplify
+import { Amplify } from 'aws-amplify';
+
 // Amplify - Utilities
 import { I18n } from 'aws-amplify/utils';
 
@@ -24,6 +27,12 @@ import {
 
 // Amplify - UI React - Styles
 import '@aws-amplify/ui-react/styles.css';
+
+// Amplifyの設定
+import outputs from '@/amplify_outputs.json';
+
+// Amplifyの設定を適用
+Amplify.configure(outputs);
 
 // 日本語対応
 I18n.putVocabularies(translations);
