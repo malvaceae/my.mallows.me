@@ -15,6 +15,9 @@ import {
 // Amplify - UI React - Styles
 import '@aws-amplify/ui-react/styles.css';
 
+// Styles
+import '@/app/globals.css';
+
 // 日本語対応
 I18n.putVocabularies(translations);
 I18n.setLanguage('ja');
@@ -50,7 +53,11 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body>
-        <Authenticator components={components} hideSignUp>
+        <Authenticator
+          className='min-h-screen'
+          components={components}
+          hideSignUp
+        >
           {children}
         </Authenticator>
       </body>
