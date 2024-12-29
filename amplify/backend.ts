@@ -172,3 +172,15 @@ new CfnPolicyPrincipalAttachment(iotStack, 'PolicyPrincipalAttachment', {
   policyName: iotPolicy.ref,
   principal: iotCertificate.arn,
 });
+
+// IoTスタックの情報を出力
+backend.addOutput({
+  custom: {
+    iot: {
+      aws_region: iotStack.region,
+      signaling_channel: {
+        arn: iotSignalingChannel.attrArn,
+      },
+    },
+  },
+});
