@@ -68,3 +68,13 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer base {
+  [data-amplify-authenticator] {
+    --amplify-components-authenticator-router-background-color: hsl(var(--card));
+  }
+
+  [data-amplify-authenticator] [data-amplify-router] {
+    border-radius: var(--amplify-radii-small);
+  }
+}
