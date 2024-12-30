@@ -73,10 +73,10 @@ export default function Page() {
   // WebRTCを開始
   useEffect(() => {
     (async () => {
-      // AmplifyのバックエンドIDを取得
+      // クレデンシャルを取得
       const { credentials } = await fetchAuthSession();
 
-      // AmplifyのバックエンドIDが存在しない場合は終了
+      // クレデンシャルが存在しない場合は終了
       if (!credentials) {
         throw Error();
       }
@@ -136,7 +136,7 @@ export default function Page() {
 
       // RTCPeerConnectionを作成
       const peerConnection = new RTCPeerConnection({
-        iceServers: iceServers.flatMap((iceServer) => ({
+        iceServers: iceServers.map((iceServer) => ({
           urls: iceServer.Uris ?? [],
           credential: iceServer.Password,
           username: iceServer.Username,
