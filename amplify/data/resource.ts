@@ -1,7 +1,7 @@
 // Amplify
 import {
-  type ClientSchema,
   a,
+  type ClientSchema,
   defineData,
 } from '@aws-amplify/backend';
 

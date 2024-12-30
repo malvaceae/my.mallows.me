@@ -18,8 +18,8 @@ import { I18n } from 'aws-amplify/utils';
 // Amplify - UI React
 import {
   Authenticator,
-  AuthenticatorProps,
-  ColorMode,
+  type AuthenticatorProps,
+  type ColorMode,
   defaultDarkModeOverride,
   ThemeProvider,
   translations,
