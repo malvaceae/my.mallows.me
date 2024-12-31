@@ -43,7 +43,7 @@ const groups = [
       {
         title: 'ライブストリーミング',
         icon: Video,
-        url: '/',
+        url: '/live',
       },
     ],
   },
@@ -72,15 +72,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </div>
       </SidebarHeader>
       <SidebarContent>
-        {groups.map((group, key) => (
-          <SidebarGroup key={key}>
+        {groups.map((group, i) => (
+          <SidebarGroup key={i}>
             <SidebarGroupContent>
               <SidebarGroupLabel>
                 {group.title}
               </SidebarGroupLabel>
               <SidebarMenu>
-                {group.items.map((item, key) => (
-                  <SidebarMenuItem key={key}>
+                {group.items.map((item, i) => (
+                  <SidebarMenuItem key={i}>
                     <SidebarMenuButton asChild>
                       <a href={item.url}>
                         <item.icon />

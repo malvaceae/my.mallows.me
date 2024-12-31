@@ -14,9 +14,12 @@ import { AmplifyLayout } from '@/components/amplify-layout';
 import { AppLayout } from '@/components/app-layout';
 
 // メタデータ
-export const metadata = {
-  title: 'my.mallows.me',
-} satisfies Metadata;
+export const metadata: Metadata = {
+  title: {
+    template: '%s | my.mallows.me',
+    default: 'my.mallows.me',
+  },
+};
 
 // ルートレイアウト
 export default function RootLayout({

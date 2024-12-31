@@ -1,15 +1,5 @@
 'use client';
 
-// shadcn/ui - Breadcrumb
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
-
 // shadcn/ui - Separator
 import { Separator } from '@/components/ui/separator';
 
@@ -22,6 +12,9 @@ import {
 
 // アプリサイドバー
 import { AppSidebar } from '@/components/app-sidebar';
+
+// パンくずリスト
+import { Breadcrumbs } from '@/components/breadcrumbs';
 
 // テーマ切替ボタン
 import { ThemeToggle } from '@/components/theme-toggle';
@@ -40,21 +33,7 @@ export function AppLayout({
           <div className='flex gap-2 items-center px-4'>
             <SidebarTrigger className='-ml-1' />
             <Separator className='h-4 mr-2' orientation='vertical' />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbLink href='/'>
-                    ホーム
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>
-                    ライブストリーミング
-                  </BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
+            <Breadcrumbs />
           </div>
           <div className='flex gap-2 items-center px-4'>
             <ThemeToggle className='w-7 h-7 -mr-1' />
