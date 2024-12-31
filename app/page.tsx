@@ -32,26 +32,8 @@ import { fetchAuthSession } from 'aws-amplify/auth';
 // Amplify - Data
 import { generateClient } from 'aws-amplify/data';
 
-// Amplify - Utilities
-import { I18n } from 'aws-amplify/utils';
-
-// Amplify - UI React
-import { useAuthenticator } from '@aws-amplify/ui-react';
-
 // shadcn/ui - Aspect Ratio
 import { AspectRatio } from '@/components/ui/aspect-ratio';
-
-// shadcn/ui - Button
-import { Button } from '@/components/ui/button';
-
-// shadcn/ui - Card
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 
 // Amplify - Data Schema
 import type { Schema } from '@/amplify/data/resource';
@@ -64,9 +46,6 @@ const client = generateClient<Schema>();
 
 // トップページ
 export default function Page() {
-  // 認証
-  const { signOut } = useAuthenticator();
-
   // videoタグ
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -201,30 +180,23 @@ export default function Page() {
   }, []);
 
   return (
-    <main className='flex items-center justify-center min-h-screen'>
-      <Card className='w-[690px]'>
-        <CardHeader>
-          <CardTitle>
-            ラズパイからの映像を確認するサンプルページ
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+    <div className='flex flex-col gap-4'>
+      <div className='font-bold'>
+        ラズパイからの映像を確認するサンプルページ
+      </div>
+      <div className='xl:flex gap-4'>
+        <div className='xl:w-2/3'>
           <AspectRatio ratio={4 / 3}>
             <video
               ref={videoRef}
-              className='h-full rounded-xl'
+              className='h-full border rounded-xl'
               autoPlay
               controls
               muted
             />
           </AspectRatio>
-        </CardContent>
-        <CardFooter className='justify-end'>
-          <Button onClick={signOut}>
-            {I18n.get('Sign Out')}
-          </Button>
-        </CardFooter>
-      </Card>
-    </main>
+        </div>
+      </div>
+    </div>
   );
 }
