@@ -185,11 +185,11 @@ export default function Page() {
         ラズパイからの映像を確認するサンプルページ
       </div>
       <div className='xl:flex gap-4'>
-        <div className='xl:w-2/3'>
+        <div className='xl:w-3/5'>
           <AspectRatio ratio={4 / 3}>
             <video
               ref={videoRef}
-              className='h-full border rounded-xl'
+              className='h-full rounded-xl'
               autoPlay
               controls
               muted

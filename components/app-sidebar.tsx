@@ -8,9 +8,9 @@ import { useAuthenticator } from '@aws-amplify/ui-react';
 
 // Lucide React
 import {
-  Camera,
   Code2,
   Home,
+  Video,
 } from 'lucide-react';
 
 // shadcn/ui - Button
@@ -42,7 +42,7 @@ const groups = [
       },
       {
         title: 'ライブストリーミング',
-        icon: Camera,
+        icon: Video,
         url: '/',
       },
     ],

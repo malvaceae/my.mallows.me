@@ -1,8 +1,5 @@
 'use client';
 
-// shadcn/ui - Separator
-import { Separator } from '@/components/ui/separator';
-
 // shadcn/ui - Breadcrumb
 import {
   Breadcrumb,
@@ -12,6 +9,9 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
+
+// shadcn/ui - Separator
+import { Separator } from '@/components/ui/separator';
 
 // shadcn/ui - Sidebar
 import {
@@ -23,6 +23,9 @@ import {
 // アプリサイドバー
 import { AppSidebar } from '@/components/app-sidebar';
 
+// テーマ切替ボタン
+import { ThemeToggle } from '@/components/theme-toggle';
+
 // アプリレイアウト
 export function AppLayout({
   children,
@@ -33,24 +36,29 @@ export function AppLayout({
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className='flex gap-2 items-center h-16 px-3 border-b'>
-          <SidebarTrigger />
-          <Separator className='mr-2 h-4' orientation='vertical' />
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink href='/'>
-                  ホーム
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>
-                  ライブストリーミング
-                </BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
+        <header className='flex gap-2 justify-between h-16 border-b'>
+          <div className='flex gap-2 items-center px-4'>
+            <SidebarTrigger className='-ml-1' />
+            <Separator className='h-4 mr-2' orientation='vertical' />
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink href='/'>
+                    ホーム
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>
+                    ライブストリーミング
+                  </BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+          <div className='flex gap-2 items-center px-4'>
+            <ThemeToggle className='w-7 h-7 -mr-1' />
+          </div>
         </header>
         <div className='p-4'>
           {children}
