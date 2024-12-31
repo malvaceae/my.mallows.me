@@ -1,5 +1,13 @@
+// Next.js
+import type { Metadata } from 'next';
+
 // shadcn/ui - Separator
 import { Separator } from '@/components/ui/separator';
+
+// メタデータ
+export const metadata: Metadata = {
+  title: '404 Not Found',
+};
 
 // 404 Not Found
 export default function NotFound() {
