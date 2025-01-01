@@ -7,8 +7,8 @@ import '@/app/globals.css';
 // Themes
 import { ThemeProvider } from '@/components/theme-provider';
 
-// Amplify - UI React
-import { AmplifyLayout } from '@/components/amplify-layout';
+// 認証
+import { Authenticator } from '@/components/authenticator';
 
 // アプリレイアウト
 import { AppLayout } from '@/components/app-layout';
@@ -36,11 +36,11 @@ export default function RootLayout({
           disableTransitionOnChange
           enableSystem
         >
-          <AmplifyLayout>
+          <Authenticator>
             <AppLayout>
               {children}
             </AppLayout>
-          </AmplifyLayout>
+          </Authenticator>
         </ThemeProvider>
       </body>
     </html>

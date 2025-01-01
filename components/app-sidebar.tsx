@@ -1,8 +1,5 @@
 'use client';
 
-// Amplify - Utilities
-import { I18n } from 'aws-amplify/utils';
-
 // Amplify - UI React
 import { useAuthenticator } from '@aws-amplify/ui-react';
 
@@ -96,7 +93,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
       <SidebarFooter className='justify-center h-16 border-t'>
         <Button variant='secondary' onClick={signOut}>
-          {I18n.get('Sign Out')}
+          ログアウト
         </Button>
       </SidebarFooter>
     </Sidebar>
