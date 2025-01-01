@@ -17,6 +17,15 @@ import {
   ThermometerSun,
 } from 'lucide-react';
 
+// Recharts
+import {
+  CartesianGrid,
+  Line,
+  LineChart,
+  XAxis,
+  YAxis,
+} from 'recharts';
+
 // shadcn/ui - Card
 import {
   Card,
@@ -24,6 +33,14 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+
+// shadcn/ui - Chart
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@/components/ui/chart';
 
 // Amplify - Data Schema
 import type { Schema } from '@/amplify/data/resource';
@@ -33,6 +50,22 @@ import outputs from '@/amplify_outputs.json';
 
 // Amplifyのデータクライアント
 const client = generateClient<Schema>();
+
+// グラフ設定
+const chartConfig: ChartConfig = {
+  temperature: {
+    label: '気温',
+    color: 'hsl(var(--chart-1))',
+  },
+  pressure: {
+    label: '気圧',
+    color: 'hsl(var(--chart-2))',
+  },
+  humidity: {
+    label: '湿度',
+    color: 'hsl(var(--chart-3))',
+  },
+};
 
 // 不快指数の計算
 const calcDiscomfortIndex = (t: number, h: number) => {
@@ -54,12 +87,12 @@ export default function HomePage() {
       });
 
       // センサー測定値を保持
-      setSensorValues(data);
+      setSensorValues(data.reverse());
     })();
   }, []);
 
   // 最新の気温・気圧・湿度
-  const { temperature, pressure, humidity } = sensorValues[0] ?? {};
+  const { temperature, pressure, humidity } = sensorValues[sensorValues.length - 1] ?? {};
 
   return (
     <div className='flex flex-col gap-4'>
@@ -76,7 +109,7 @@ export default function HomePage() {
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>
-              {Math.round(temperature * 100) / 100 || '-'} ℃
+              {temperature?.toFixed(2) ?? '-'} ℃
             </div>
           </CardContent>
         </Card>
@@ -89,7 +122,7 @@ export default function HomePage() {
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>
-              {Math.round(pressure * 100) / 100 || '-'} hPa
+              {pressure?.toFixed(2) ?? '-'} hPa
             </div>
           </CardContent>
         </Card>
@@ -102,7 +135,7 @@ export default function HomePage() {
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>
-              {Math.round(humidity * 100) / 100 || '-'} ％
+              {humidity?.toFixed(2) ?? '-'} ％
             </div>
           </CardContent>
         </Card>
@@ -115,8 +148,142 @@ export default function HomePage() {
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>
-              {Math.round(calcDiscomfortIndex(temperature, humidity) * 100) / 100 || '-'}
+              {calcDiscomfortIndex(temperature, humidity).toFixed(2) || '-'}
             </div>
+          </CardContent>
+        </Card>
+      </div>
+      <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              気温
+            </CardTitle>
+          </CardHeader>
+          <CardContent className='px-2 sm:p-6'>
+            <ChartContainer config={chartConfig}>
+              <LineChart
+                accessibilityLayer
+                data={sensorValues}
+                margin={{ left: 12, right: 12 }}
+                maxBarSize={10}
+              >
+                <CartesianGrid vertical={false} />
+                <XAxis
+                  axisLine={false}
+                  dataKey='timestamp'
+                  tickFormatter={(value) => new Date(value * 1000).toTimeString().slice(0, 5)}
+                  tickLine={false}
+                  tickMargin={8}
+                />
+                <YAxis
+                  axisLine={false}
+                  dataKey='temperature'
+                  domain={['auto', 'auto']}
+                  tickFormatter={(value) => `${value.toFixed(2)} ℃`}
+                  tickLine={false}
+                  tickMargin={8}
+                />
+                <ChartTooltip
+                  content={<ChartTooltipContent hideLabel />}
+                />
+                <Line
+                  dataKey='temperature'
+                  dot={false}
+                  stroke='var(--color-temperature)'
+                  strokeWidth={2}
+                  type='natural'
+                />
+              </LineChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              気圧
+            </CardTitle>
+          </CardHeader>
+          <CardContent className='px-2 sm:p-6'>
+            <ChartContainer config={chartConfig}>
+              <LineChart
+                accessibilityLayer
+                data={sensorValues}
+                margin={{ left: 12, right: 12 }}
+                maxBarSize={10}
+              >
+                <CartesianGrid vertical={false} />
+                <XAxis
+                  axisLine={false}
+                  dataKey='timestamp'
+                  tickFormatter={(value) => new Date(value * 1000).toTimeString().slice(0, 5)}
+                  tickLine={false}
+                  tickMargin={8}
+                />
+                <YAxis
+                  axisLine={false}
+                  dataKey='pressure'
+                  domain={['auto', 'auto']}
+                  tickFormatter={(value) => `${value.toFixed(2)} hPa`}
+                  tickLine={false}
+                  tickMargin={8}
+                />
+                <ChartTooltip
+                  content={<ChartTooltipContent hideLabel />}
+                />
+                <Line
+                  dataKey='pressure'
+                  dot={false}
+                  stroke='var(--color-pressure)'
+                  strokeWidth={2}
+                  type='natural'
+                />
+              </LineChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              湿度
+            </CardTitle>
+          </CardHeader>
+          <CardContent className='px-2 sm:p-6'>
+            <ChartContainer config={chartConfig}>
+              <LineChart
+                accessibilityLayer
+                data={sensorValues}
+                margin={{ left: 12, right: 12 }}
+                maxBarSize={10}
+              >
+                <CartesianGrid vertical={false} />
+                <XAxis
+                  axisLine={false}
+                  dataKey='timestamp'
+                  tickFormatter={(value) => new Date(value * 1000).toTimeString().slice(0, 5)}
+                  tickLine={false}
+                  tickMargin={8}
+                />
+                <YAxis
+                  axisLine={false}
+                  dataKey='humidity'
+                  domain={['auto', 'auto']}
+                  tickFormatter={(value) => `${value.toFixed(2)} ％`}
+                  tickLine={false}
+                  tickMargin={8}
+                />
+                <ChartTooltip
+                  content={<ChartTooltipContent hideLabel />}
+                />
+                <Line
+                  dataKey='humidity'
+                  dot={false}
+                  stroke='var(--color-humidity)'
+                  strokeWidth={2}
+                  type='natural'
+                />
+              </LineChart>
+            </ChartContainer>
           </CardContent>
         </Card>
       </div>
