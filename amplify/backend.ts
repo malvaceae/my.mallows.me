@@ -8,6 +8,9 @@ import {
   ParameterPathConversions,
 } from '@aws-amplify/platform-core';
 
+// AWS CDK
+import { Arn } from 'aws-cdk-lib';
+
 // AWS CDK - Kinesis Video Streams
 import { CfnSignalingChannel } from 'aws-cdk-lib/aws-kinesisvideo';
 
@@ -27,6 +30,7 @@ import {
   CfnRoleAlias,
   CfnThing,
   CfnThingPrincipalAttachment,
+  CfnTopicRule,
 } from 'aws-cdk-lib/aws-iot';
 
 // AWS CDK - Systems Manager
@@ -157,6 +161,35 @@ const iotPolicy = new CfnPolicy(iotStack, 'Policy', {
     statements: [
       new PolicyStatement({
         actions: [
+          'iot:Connect',
+        ],
+        resources: [
+          Arn.format({
+            service: 'iot',
+            resource: 'client',
+            resourceName: '${iot:Connection.Thing.ThingName}',
+          }, iotStack),
+        ],
+        conditions: {
+          Bool: {
+            'iot:Connection.Thing.IsAttached': 'true',
+          },
+        },
+      }),
+      new PolicyStatement({
+        actions: [
+          'iot:Publish',
+        ],
+        resources: [
+          Arn.format({
+            service: 'iot',
+            resource: 'topic',
+            resourceName: '${iot:Connection.Thing.ThingName}/sensor-value/pub',
+          }, iotStack),
+        ],
+      }),
+      new PolicyStatement({
+        actions: [
           'iot:AssumeRoleWithCertificate',
         ],
         resources: [
@@ -173,6 +206,46 @@ new CfnPolicyPrincipalAttachment(iotStack, 'PolicyPrincipalAttachment', {
   principal: iotCertificate.arn,
 });
 
+// センサー測定値をPutするIAMロール
+const iotSensorValuePutRole = new Role(iotStack, 'SensorValuePutRole', {
+  assumedBy: new ServicePrincipal('iot.amazonaws.com'),
+});
+
+// センサー測定値をPutするポリシーを追加
+backend.data.resources.tables.SensorValue.grant(iotSensorValuePutRole, 'dynamodb:PutItem');
+
+// センサー測定値をPutするIoTルール
+new CfnTopicRule(iotStack, 'SensorValuePutTopicRule', {
+  topicRulePayload: {
+    actions: [
+      {
+        dynamoDBv2: {
+          putItem: {
+            tableName: backend.data.resources.tables.SensorValue.tableName,
+          },
+          roleArn: iotSensorValuePutRole.roleArn,
+        },
+      },
+    ],
+    awsIotSqlVersion: '2016-03-23',
+    sql: `
+      SELECT
+        {
+          'thingName': topic(1),
+          'timestamp': timestamp,
+          'temperature': temperature,
+          'pressure': pressure,
+          'humidity': humidity,
+          'createdAt': parse_time("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timestamp * 1000),
+          'updatedAt': parse_time("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timestamp * 1000),
+          '__typename': 'SensorValue'
+        }
+      FROM
+        '${iotThing.ref}/sensor-value/pub'
+    `.replace(/\s+/g, ' ').trim(),
+  },
+});
+
 // IoTスタックの情報を出力
 backend.addOutput({
   custom: {
@@ -180,6 +253,9 @@ backend.addOutput({
       aws_region: iotStack.region,
       signaling_channel: {
         arn: iotSignalingChannel.attrArn,
+      },
+      thing: {
+        name: iotThing.ref,
       },
     },
   },

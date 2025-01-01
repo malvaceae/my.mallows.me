@@ -7,14 +7,14 @@ import {
 
 // スキーマを定義
 const schema = a.schema({
-  BME280: a.model({
-    id: a.id().required(),
+  SensorValue: a.model({
+    thingName: a.string().required(),
     timestamp: a.timestamp().required(),
     temperature: a.float().required(),
     pressure: a.float().required(),
     humidity: a.float().required(),
   })
-    .identifier(['id', 'timestamp'])
+    .identifier(['thingName', 'timestamp'])
     .authorization((allow) => [
       allow.authenticated(),
     ]),
