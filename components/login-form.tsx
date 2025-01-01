@@ -40,6 +40,9 @@ import { Input } from '@/components/ui/input';
 // shadcn/ui - Label
 import { Label } from '@/components/ui/label';
 
+// テーマ切替ボタン
+import { ThemeToggle } from '@/components/theme-toggle';
+
 // ログインフォーム
 export function LoginForm({
   children,
@@ -95,6 +98,7 @@ export function LoginForm({
 
   return (
     <div className='flex items-center justify-center min-h-svh'>
+      <ThemeToggle className='absolute top-0 right-0 m-2' />
       <Card className='w-full max-w-sm m-4'>
         <CardHeader>
           <CardTitle className='text-2xl'>

@@ -7,7 +7,7 @@ import { Noto_Sans_JP } from 'next/font/google';
 // Styles
 import '@/app/globals.css';
 
-// Themes
+// テーマプロバイダー
 import { ThemeProvider } from '@/components/theme-provider';
 
 // 認証
