@@ -1,6 +1,9 @@
 // Next.js
 import type { Metadata } from 'next';
 
+// Next.js - Google Fonts
+import { Noto_Sans_JP } from 'next/font/google';
+
 // Styles
 import '@/app/globals.css';
 
@@ -21,6 +24,13 @@ export const metadata: Metadata = {
   },
 };
 
+// Noto Sans JP
+const notoSansJp = Noto_Sans_JP({
+  subsets: [
+    'latin',
+  ],
+});
+
 // ルートレイアウト
 export default function RootLayout({
   children,
@@ -29,7 +39,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang='ja' suppressHydrationWarning>
-      <body>
+      <body className={notoSansJp.className}>
         <ThemeProvider
           attribute='class'
           defaultTheme='system'
