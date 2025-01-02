@@ -94,6 +94,16 @@ export default function HomePage() {
   // 最新の気温・気圧・湿度
   const { temperature, pressure, humidity } = sensorValues[sensorValues.length - 1] ?? {};
 
+  // 日時の最小値・最大値
+  const timestamps = sensorValues.map(({ timestamp }) => timestamp);
+  const timestampMin = Math.min.apply(null, timestamps);
+  const timestampMax = Math.max.apply(null, timestamps);
+
+  // 10分刻みで表示
+  const dataMin = timestampMin - timestampMin % (10 * 60);
+  const dataMax = timestampMax - timestampMax % (10 * 60) + (10 * 60);
+  const tickCount = (dataMax - dataMin) / (10 * 60) + 1;
+
   return (
     <div className='flex flex-col gap-4'>
       <div className='font-bold'>
@@ -172,11 +182,8 @@ export default function HomePage() {
                 <XAxis
                   axisLine={false}
                   dataKey='timestamp'
-                  domain={([dataMin, dataMax]) => [
-                    Math.floor(dataMin / (10 * 60)) * (10 * 60),
-                    Math.floor(dataMax / (10 * 60)) * (10 * 60) + (10 * 60),
-                  ]}
-                  tickCount={7}
+                  domain={[dataMin, dataMax]}
+                  tickCount={tickCount}
                   tickFormatter={(value) => new Date(value * 1000).toTimeString().slice(0, 5)}
                   tickLine={false}
                   tickMargin={8}
@@ -222,11 +229,8 @@ export default function HomePage() {
                 <XAxis
                   axisLine={false}
                   dataKey='timestamp'
-                  domain={([dataMin, dataMax]) => [
-                    Math.floor(dataMin / (10 * 60)) * (10 * 60),
-                    Math.floor(dataMax / (10 * 60)) * (10 * 60) + (10 * 60),
-                  ]}
-                  tickCount={7}
+                  domain={[dataMin, dataMax]}
+                  tickCount={tickCount}
                   tickFormatter={(value) => new Date(value * 1000).toTimeString().slice(0, 5)}
                   tickLine={false}
                   tickMargin={8}
@@ -272,11 +276,8 @@ export default function HomePage() {
                 <XAxis
                   axisLine={false}
                   dataKey='timestamp'
-                  domain={([dataMin, dataMax]) => [
-                    Math.floor(dataMin / (10 * 60)) * (10 * 60),
-                    Math.floor(dataMax / (10 * 60)) * (10 * 60) + (10 * 60),
-                  ]}
-                  tickCount={7}
+                  domain={[dataMin, dataMax]}
+                  tickCount={tickCount}
                   tickFormatter={(value) => new Date(value * 1000).toTimeString().slice(0, 5)}
                   tickLine={false}
                   tickMargin={8}
