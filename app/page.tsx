@@ -172,7 +172,10 @@ export default function HomePage() {
                 <XAxis
                   axisLine={false}
                   dataKey='timestamp'
-                  domain={['auto', 'auto']}
+                  domain={([dataMin, dataMax]) => [
+                    Math.floor(dataMin / (5 * 60)) * (5 * 60),
+                    Math.floor(dataMax / (5 * 60)) * (5 * 60) + (5 * 60),
+                  ]}
                   tickCount={13}
                   tickFormatter={(value) => new Date(value * 1000).toTimeString().slice(0, 5)}
                   tickLine={false}
@@ -219,7 +222,10 @@ export default function HomePage() {
                 <XAxis
                   axisLine={false}
                   dataKey='timestamp'
-                  domain={['auto', 'auto']}
+                  domain={([dataMin, dataMax]) => [
+                    Math.floor(dataMin / (5 * 60)) * (5 * 60),
+                    Math.floor(dataMax / (5 * 60)) * (5 * 60) + (5 * 60),
+                  ]}
                   tickCount={13}
                   tickFormatter={(value) => new Date(value * 1000).toTimeString().slice(0, 5)}
                   tickLine={false}
@@ -266,7 +272,10 @@ export default function HomePage() {
                 <XAxis
                   axisLine={false}
                   dataKey='timestamp'
-                  domain={['auto', 'auto']}
+                  domain={([dataMin, dataMax]) => [
+                    Math.floor(dataMin / (5 * 60)) * (5 * 60),
+                    Math.floor(dataMax / (5 * 60)) * (5 * 60) + (5 * 60),
+                  ]}
                   tickCount={13}
                   tickFormatter={(value) => new Date(value * 1000).toTimeString().slice(0, 5)}
                   tickLine={false}
