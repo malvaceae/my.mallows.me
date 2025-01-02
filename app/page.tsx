@@ -173,10 +173,10 @@ export default function HomePage() {
                   axisLine={false}
                   dataKey='timestamp'
                   domain={([dataMin, dataMax]) => [
-                    Math.floor(dataMin / (5 * 60)) * (5 * 60),
-                    Math.floor(dataMax / (5 * 60)) * (5 * 60) + (5 * 60),
+                    Math.floor(dataMin / (10 * 60)) * (10 * 60),
+                    Math.floor(dataMax / (10 * 60)) * (10 * 60) + (10 * 60),
                   ]}
-                  tickCount={14}
+                  tickCount={7}
                   tickFormatter={(value) => new Date(value * 1000).toTimeString().slice(0, 5)}
                   tickLine={false}
                   tickMargin={8}
@@ -223,10 +223,10 @@ export default function HomePage() {
                   axisLine={false}
                   dataKey='timestamp'
                   domain={([dataMin, dataMax]) => [
-                    Math.floor(dataMin / (5 * 60)) * (5 * 60),
-                    Math.floor(dataMax / (5 * 60)) * (5 * 60) + (5 * 60),
+                    Math.floor(dataMin / (10 * 60)) * (10 * 60),
+                    Math.floor(dataMax / (10 * 60)) * (10 * 60) + (10 * 60),
                   ]}
-                  tickCount={14}
+                  tickCount={7}
                   tickFormatter={(value) => new Date(value * 1000).toTimeString().slice(0, 5)}
                   tickLine={false}
                   tickMargin={8}
@@ -273,10 +273,10 @@ export default function HomePage() {
                   axisLine={false}
                   dataKey='timestamp'
                   domain={([dataMin, dataMax]) => [
-                    Math.floor(dataMin / (5 * 60)) * (5 * 60),
-                    Math.floor(dataMax / (5 * 60)) * (5 * 60) + (5 * 60),
+                    Math.floor(dataMin / (10 * 60)) * (10 * 60),
+                    Math.floor(dataMax / (10 * 60)) * (10 * 60) + (10 * 60),
                   ]}
-                  tickCount={14}
+                  tickCount={7}
                   tickFormatter={(value) => new Date(value * 1000).toTimeString().slice(0, 5)}
                   tickLine={false}
                   tickMargin={8}
