@@ -176,7 +176,7 @@ export default function HomePage() {
                     Math.floor(dataMin / (5 * 60)) * (5 * 60),
                     Math.floor(dataMax / (5 * 60)) * (5 * 60) + (5 * 60),
                   ]}
-                  tickCount={13}
+                  tickCount={14}
                   tickFormatter={(value) => new Date(value * 1000).toTimeString().slice(0, 5)}
                   tickLine={false}
                   tickMargin={8}
@@ -226,7 +226,7 @@ export default function HomePage() {
                     Math.floor(dataMin / (5 * 60)) * (5 * 60),
                     Math.floor(dataMax / (5 * 60)) * (5 * 60) + (5 * 60),
                   ]}
-                  tickCount={13}
+                  tickCount={14}
                   tickFormatter={(value) => new Date(value * 1000).toTimeString().slice(0, 5)}
                   tickLine={false}
                   tickMargin={8}
@@ -276,7 +276,7 @@ export default function HomePage() {
                     Math.floor(dataMin / (5 * 60)) * (5 * 60),
                     Math.floor(dataMax / (5 * 60)) * (5 * 60) + (5 * 60),
                   ]}
-                  tickCount={13}
+                  tickCount={14}
                   tickFormatter={(value) => new Date(value * 1000).toTimeString().slice(0, 5)}
                   tickLine={false}
                   tickMargin={8}
