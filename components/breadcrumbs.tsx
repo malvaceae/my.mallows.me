@@ -54,22 +54,23 @@ export function Breadcrumbs() {
       <BreadcrumbList>
         {items.map((item, i) => (
           <Fragment key={i}>
-            {i === items.length - 1 || (
-              <BreadcrumbItem>
-                <BreadcrumbLink href={item.url}>
-                  {item.title}
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-            )}
-            {i === items.length - 1 || (
-              <BreadcrumbSeparator />
-            )}
-            {i === items.length - 1 && (
-              <BreadcrumbItem>
-                <BreadcrumbPage>
-                  {item.title}
-                </BreadcrumbPage>
-              </BreadcrumbItem>
+            {i < items.length - 1 ? (
+              <>
+                <BreadcrumbItem>
+                  <BreadcrumbLink href={item.url}>
+                    {item.title}
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+              </>
+            ) : (
+              <>
+                <BreadcrumbItem>
+                  <BreadcrumbPage>
+                    {item.title}
+                  </BreadcrumbPage>
+                </BreadcrumbItem>
+              </>
             )}
           </Fragment>
         ))}

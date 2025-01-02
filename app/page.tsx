@@ -86,7 +86,7 @@ export default function HomePage() {
         limit: 60,
       });
 
-      // センサー測定値を保持
+      // センサー測定値を日時の昇順で保持
       setSensorValues(data.reverse());
     })();
   }, []);
@@ -100,7 +100,7 @@ export default function HomePage() {
         ダッシュボード
       </div>
       <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
-        <Card>
+        <Card className='order-1'>
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
             <CardTitle className='text-sm'>
               気温
@@ -113,7 +113,7 @@ export default function HomePage() {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className='order-3'>
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
             <CardTitle className='text-sm'>
               気圧
@@ -126,7 +126,7 @@ export default function HomePage() {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className='order-2'>
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
             <CardTitle className='text-sm'>
               湿度
@@ -139,7 +139,7 @@ export default function HomePage() {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className='order-4'>
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
             <CardTitle className='text-sm'>
               不快指数
@@ -148,13 +148,13 @@ export default function HomePage() {
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>
-              {calcDiscomfortIndex(temperature, humidity).toFixed(2) || '-'}
+              {temperature && humidity ? calcDiscomfortIndex(temperature, humidity).toFixed(2) : '-'}
             </div>
           </CardContent>
         </Card>
       </div>
       <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
-        <Card>
+        <Card className='order-1'>
           <CardHeader>
             <CardTitle>
               気温
@@ -165,16 +165,19 @@ export default function HomePage() {
               <LineChart
                 accessibilityLayer
                 data={sensorValues}
-                margin={{ left: 12, right: 12 }}
+                margin={{ right: 12, left: 12 }}
                 maxBarSize={10}
               >
                 <CartesianGrid vertical={false} />
                 <XAxis
                   axisLine={false}
                   dataKey='timestamp'
+                  domain={['auto', 'auto']}
+                  tickCount={13}
                   tickFormatter={(value) => new Date(value * 1000).toTimeString().slice(0, 5)}
                   tickLine={false}
                   tickMargin={8}
+                  type='number'
                 />
                 <YAxis
                   axisLine={false}
@@ -198,7 +201,7 @@ export default function HomePage() {
             </ChartContainer>
           </CardContent>
         </Card>
-        <Card>
+        <Card className='order-3'>
           <CardHeader>
             <CardTitle>
               気圧
@@ -209,16 +212,19 @@ export default function HomePage() {
               <LineChart
                 accessibilityLayer
                 data={sensorValues}
-                margin={{ left: 12, right: 12 }}
+                margin={{ right: 12, left: 12 }}
                 maxBarSize={10}
               >
                 <CartesianGrid vertical={false} />
                 <XAxis
                   axisLine={false}
                   dataKey='timestamp'
+                  domain={['auto', 'auto']}
+                  tickCount={13}
                   tickFormatter={(value) => new Date(value * 1000).toTimeString().slice(0, 5)}
                   tickLine={false}
                   tickMargin={8}
+                  type='number'
                 />
                 <YAxis
                   axisLine={false}
@@ -242,7 +248,7 @@ export default function HomePage() {
             </ChartContainer>
           </CardContent>
         </Card>
-        <Card>
+        <Card className='order-2'>
           <CardHeader>
             <CardTitle>
               湿度
@@ -253,16 +259,19 @@ export default function HomePage() {
               <LineChart
                 accessibilityLayer
                 data={sensorValues}
-                margin={{ left: 12, right: 12 }}
+                margin={{ right: 12, left: 12 }}
                 maxBarSize={10}
               >
                 <CartesianGrid vertical={false} />
                 <XAxis
                   axisLine={false}
                   dataKey='timestamp'
+                  domain={['auto', 'auto']}
+                  tickCount={13}
                   tickFormatter={(value) => new Date(value * 1000).toTimeString().slice(0, 5)}
                   tickLine={false}
                   tickMargin={8}
+                  type='number'
                 />
                 <YAxis
                   axisLine={false}
