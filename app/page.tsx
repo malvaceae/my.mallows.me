@@ -242,7 +242,10 @@ export default function HomePage() {
                 <YAxis
                   axisLine={false}
                   dataKey='temperature'
-                  domain={([dataMin, dataMax]) => [Math.floor(dataMin), Math.ceil(dataMax)]}
+                  domain={([dataMin, dataMax]) => [
+                    Math.floor(dataMin) - 1,
+                    Math.ceil(dataMax) + 1,
+                  ]}
                   tickFormatter={(value) => `${value.toFixed(2)} ℃`}
                   tickLine={false}
                   tickMargin={8}
@@ -289,7 +292,10 @@ export default function HomePage() {
                 <YAxis
                   axisLine={false}
                   dataKey='pressure'
-                  domain={([dataMin, dataMax]) => [Math.floor(dataMin), Math.ceil(dataMax)]}
+                  domain={([dataMin, dataMax]) => [
+                    Math.floor(dataMin) - 1,
+                    Math.ceil(dataMax) + 1,
+                  ]}
                   tickFormatter={(value) => `${value.toFixed(2)} hPa`}
                   tickLine={false}
                   tickMargin={8}
@@ -337,7 +343,10 @@ export default function HomePage() {
                 <YAxis
                   axisLine={false}
                   dataKey='humidity'
-                  domain={([dataMin, dataMax]) => [Math.floor(dataMin), Math.ceil(dataMax)]}
+                  domain={([dataMin, dataMax]) => [
+                    Math.floor(dataMin) - 1,
+                    Math.ceil(dataMax) + 1,
+                  ]}
                   tickFormatter={(value) => `${value.toFixed(2)} ％`}
                   tickLine={false}
                   tickMargin={8}
