@@ -98,7 +98,7 @@ const periods = [
     margin: 30 * 60,
   },
   {
-    title: '24時間',
+    title: '1日',
     value: 24 * 60 * 60,
     margin: 60 * 60,
   },
@@ -146,7 +146,7 @@ export default function HomePage() {
   return (
     <div className='flex flex-col gap-4'>
       <div className='flex items-center justify-between'>
-        <div className='text-xl font-bold'>
+        <div className='text-lg font-bold'>
           ダッシュボード
         </div>
         <ToggleGroup
