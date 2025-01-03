@@ -107,7 +107,7 @@ const periods = [
 // ホーム
 export default function HomePage() {
   // センサー測定値
-  const [sensorValues, setSensorValues] = useState<Schema['SensorValue']['type'][]>([]);
+  const [sensorValues, setSensorValues] = useState<Pick<Schema['SensorValue']['type'], 'timestamp' | 'temperature' | 'pressure' | 'humidity'>[]>([]);
 
   // 最新のタイムスタンプ・気温・気圧・湿度
   const { timestamp, temperature, pressure, humidity } = sensorValues[0] ?? {};
@@ -130,6 +130,12 @@ export default function HomePage() {
         thingName: outputs.custom.iot.thing.name,
         sortDirection: 'DESC',
         limit: 1440,
+        selectionSet: [
+          'timestamp',
+          'temperature',
+          'pressure',
+          'humidity',
+        ],
         timestamp: {
           ge: Math.floor(Date.now() / 1000) - period.value,
         },
