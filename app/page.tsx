@@ -85,22 +85,22 @@ const periods = [
   {
     title: '1時間',
     value: 1 * 60 * 60,
-    margin: 10 * 60,
+    interval: 10 * 60,
   },
   {
     title: '3時間',
     value: 3 * 60 * 60,
-    margin: 20 * 60,
+    interval: 20 * 60,
   },
   {
     title: '12時間',
     value: 12 * 60 * 60,
-    margin: 30 * 60,
+    interval: 30 * 60,
   },
   {
     title: '1日',
     value: 24 * 60 * 60,
-    margin: 60 * 60,
+    interval: 60 * 60,
   },
 ];
 
@@ -109,39 +109,36 @@ export default function HomePage() {
   // センサー測定値
   const [sensorValues, setSensorValues] = useState<Schema['SensorValue']['type'][]>([]);
 
-  // 最新の気温・気圧・湿度
-  const { temperature, pressure, humidity } = sensorValues[sensorValues.length - 1] ?? {};
+  // 最新のタイムスタンプ・気温・気圧・湿度
+  const { timestamp, temperature, pressure, humidity } = sensorValues[0] ?? {};
 
   // 表示期間
   const [period, setPeriod] = useState(periods[0]);
 
-  // 開始時刻
-  const startTime = Math.floor(Date.now() / 1000) - period.value;
-
-  // X軸の設定
-  const dataMin = startTime - startTime % period.margin;
-  const dataMax = startTime - startTime % period.margin + period.margin + period.value;
-  const tickCount = Math.max(8, Math.min(16, (dataMax - dataMin) / period.margin + 1));
+  // X軸の目盛り
+  const xTicks = [...Array(period.value / period.interval)].map((_, i) => {
+    return (Math.floor(timestamp / period.interval) - i) * period.interval;
+  });
 
   useEffect(() => {
     (async () => {
       // センサー測定値を初期化
       setSensorValues([]);
 
-      // センサー測定値を取得
+      // センサー測定値をタイムスタンプの降順で取得
       const { data } = await client.models.SensorValue.list({
         thingName: outputs.custom.iot.thing.name,
         sortDirection: 'DESC',
         limit: 1440,
         timestamp: {
-          ge: startTime,
+          ge: Math.floor(Date.now() / 1000) - period.value,
         },
       });
 
-      // センサー測定値を日時の昇順で保持
-      setSensorValues(data.reverse());
+      // センサー測定値を保持
+      setSensorValues(data);
     })();
-  }, [startTime]);
+  }, [period]);
 
   return (
     <div className='flex flex-col gap-4'>
@@ -235,11 +232,11 @@ export default function HomePage() {
                 <XAxis
                   axisLine={false}
                   dataKey='timestamp'
-                  domain={[dataMin, dataMax]}
-                  tickCount={tickCount}
+                  domain={['dataMin', 'dataMax']}
                   tickFormatter={(value) => new Date(value * 1000).toTimeString().slice(0, 5)}
                   tickLine={false}
                   tickMargin={8}
+                  ticks={xTicks}
                   type='number'
                 />
                 <YAxis
@@ -282,11 +279,11 @@ export default function HomePage() {
                 <XAxis
                   axisLine={false}
                   dataKey='timestamp'
-                  domain={[dataMin, dataMax]}
-                  tickCount={tickCount}
+                  domain={['dataMin', 'dataMax']}
                   tickFormatter={(value) => new Date(value * 1000).toTimeString().slice(0, 5)}
                   tickLine={false}
                   tickMargin={8}
+                  ticks={xTicks}
                   type='number'
                 />
                 <YAxis
@@ -330,11 +327,11 @@ export default function HomePage() {
                 <XAxis
                   axisLine={false}
                   dataKey='timestamp'
-                  domain={[dataMin, dataMax]}
-                  tickCount={tickCount}
+                  domain={['dataMin', 'dataMax']}
                   tickFormatter={(value) => new Date(value * 1000).toTimeString().slice(0, 5)}
                   tickLine={false}
                   tickMargin={8}
+                  ticks={xTicks}
                   type='number'
                 />
                 <YAxis
