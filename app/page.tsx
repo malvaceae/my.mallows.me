@@ -42,6 +42,12 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart';
 
+// shadcn/ui - Toggle Group
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from '@/components/ui/toggle-group';
+
 // Amplify - Data Schema
 import type { Schema } from '@/amplify/data/resource';
 
@@ -72,42 +78,86 @@ const calcDiscomfortIndex = (t: number, h: number) => {
   return .81 * t + .01 * h * (.99 * t - 14.3) + 46.3;
 };
 
+// 表示期間の一覧
+const periods = [
+  {
+    title: '1時間',
+    value: 1 * 60 * 60,
+    margin: 10 * 60,
+  },
+  {
+    title: '3時間',
+    value: 3 * 60 * 60,
+    margin: 20 * 60,
+  },
+  {
+    title: '12時間',
+    value: 12 * 60 * 60,
+    margin: 30 * 60,
+  },
+  {
+    title: '24時間',
+    value: 24 * 60 * 60,
+    margin: 60 * 60,
+  },
+];
+
 // ホーム
 export default function HomePage() {
   // センサー測定値
   const [sensorValues, setSensorValues] = useState<Schema['SensorValue']['type'][]>([]);
 
+  // 最新の気温・気圧・湿度
+  const { temperature, pressure, humidity } = sensorValues[sensorValues.length - 1] ?? {};
+
+  // 表示期間
+  const [period, setPeriod] = useState(periods[0]);
+
+  // 開始時刻
+  const startTime = Math.floor(Date.now() / 1000) - period.value;
+
+  // X軸の設定
+  const dataMin = startTime - startTime % period.margin;
+  const dataMax = startTime - startTime % period.margin + period.margin + period.value;
+  const tickCount = Math.max(8, Math.min(16, (dataMax - dataMin) / period.margin + 1));
+
   useEffect(() => {
     (async () => {
+      // センサー測定値を初期化
+      setSensorValues([]);
+
       // センサー測定値を取得
       const { data } = await client.models.SensorValue.list({
         thingName: outputs.custom.iot.thing.name,
         sortDirection: 'DESC',
-        limit: 60,
+        timestamp: {
+          ge: startTime,
+        },
       });
 
       // センサー測定値を日時の昇順で保持
       setSensorValues(data.reverse());
     })();
-  }, []);
-
-  // 最新の気温・気圧・湿度
-  const { temperature, pressure, humidity } = sensorValues[sensorValues.length - 1] ?? {};
-
-  // 日時の最小値・最大値
-  const timestamps = sensorValues.map(({ timestamp }) => timestamp);
-  const timestampMin = Math.min.apply(null, timestamps);
-  const timestampMax = Math.max.apply(null, timestamps);
-
-  // 10分刻みで表示
-  const dataMin = timestampMin - timestampMin % (10 * 60);
-  const dataMax = timestampMax - timestampMax % (10 * 60) + (10 * 60);
-  const tickCount = (dataMax - dataMin) / (10 * 60) + 1;
+  }, [startTime]);
 
   return (
     <div className='flex flex-col gap-4'>
-      <div className='font-bold'>
-        ダッシュボード
+      <div className='flex items-center justify-between'>
+        <div className='font-bold'>
+          ダッシュボード
+        </div>
+        <ToggleGroup
+          type='single'
+          value={String(periods.indexOf(period))}
+          variant='outline'
+          onValueChange={(value) => value && setPeriod(periods[Number(value)])}
+        >
+          {periods.map((period, i) => (
+            <ToggleGroupItem value={String(i)} key={i}>
+              {period.title}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
       </div>
       <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
         <Card className='order-1'>
@@ -192,7 +242,10 @@ export default function HomePage() {
                 <YAxis
                   axisLine={false}
                   dataKey='temperature'
-                  domain={['auto', 'auto']}
+                  domain={([dataMin, dataMax]) => [
+                    Math.floor(dataMin),
+                    Math.ceil(dataMax),
+                  ]}
                   tickFormatter={(value) => `${value.toFixed(2)} ℃`}
                   tickLine={false}
                   tickMargin={8}
@@ -239,7 +292,10 @@ export default function HomePage() {
                 <YAxis
                   axisLine={false}
                   dataKey='pressure'
-                  domain={['auto', 'auto']}
+                  domain={([dataMin, dataMax]) => [
+                    Math.floor(dataMin),
+                    Math.ceil(dataMax),
+                  ]}
                   tickFormatter={(value) => `${value.toFixed(2)} hPa`}
                   tickLine={false}
                   tickMargin={8}
@@ -286,7 +342,10 @@ export default function HomePage() {
                 <YAxis
                   axisLine={false}
                   dataKey='humidity'
-                  domain={['auto', 'auto']}
+                  domain={([dataMin, dataMax]) => [
+                    Math.floor(dataMin),
+                    Math.ceil(dataMax),
+                  ]}
                   tickFormatter={(value) => `${value.toFixed(2)} ％`}
                   tickLine={false}
                   tickMargin={8}
