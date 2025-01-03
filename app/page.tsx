@@ -19,6 +19,8 @@ import {
 
 // Recharts
 import {
+  Area,
+  AreaChart,
   CartesianGrid,
   Line,
   LineChart,
@@ -143,7 +145,7 @@ export default function HomePage() {
   return (
     <div className='flex flex-col gap-4'>
       <div className='flex items-center justify-between'>
-        <div className='font-bold'>
+        <div className='text-xl font-bold'>
           ダッシュボード
         </div>
         <ToggleGroup
@@ -242,10 +244,7 @@ export default function HomePage() {
                 <YAxis
                   axisLine={false}
                   dataKey='temperature'
-                  domain={([dataMin, dataMax]) => [
-                    Math.floor(dataMin),
-                    Math.ceil(dataMax),
-                  ]}
+                  domain={([dataMin, dataMax]) => [Math.floor(dataMin), Math.ceil(dataMax)]}
                   tickFormatter={(value) => `${value.toFixed(2)} ℃`}
                   tickLine={false}
                   tickMargin={8}
@@ -272,7 +271,7 @@ export default function HomePage() {
           </CardHeader>
           <CardContent className='px-2 sm:p-6'>
             <ChartContainer config={chartConfig}>
-              <LineChart
+              <AreaChart
                 accessibilityLayer
                 data={sensorValues}
                 margin={{ right: 12, left: 12 }}
@@ -292,10 +291,7 @@ export default function HomePage() {
                 <YAxis
                   axisLine={false}
                   dataKey='pressure'
-                  domain={([dataMin, dataMax]) => [
-                    Math.floor(dataMin),
-                    Math.ceil(dataMax),
-                  ]}
+                  domain={([dataMin, dataMax]) => [Math.floor(dataMin), Math.ceil(dataMax)]}
                   tickFormatter={(value) => `${value.toFixed(2)} hPa`}
                   tickLine={false}
                   tickMargin={8}
@@ -303,14 +299,15 @@ export default function HomePage() {
                 <ChartTooltip
                   content={<ChartTooltipContent hideLabel />}
                 />
-                <Line
+                <Area
                   dataKey='pressure'
                   dot={false}
+                  fill='var(--color-pressure)'
                   stroke='var(--color-pressure)'
                   strokeWidth={2}
                   type='natural'
                 />
-              </LineChart>
+              </AreaChart>
             </ChartContainer>
           </CardContent>
         </Card>
@@ -342,10 +339,7 @@ export default function HomePage() {
                 <YAxis
                   axisLine={false}
                   dataKey='humidity'
-                  domain={([dataMin, dataMax]) => [
-                    Math.floor(dataMin),
-                    Math.ceil(dataMax),
-                  ]}
+                  domain={([dataMin, dataMax]) => [Math.floor(dataMin), Math.ceil(dataMax)]}
                   tickFormatter={(value) => `${value.toFixed(2)} ％`}
                   tickLine={false}
                   tickMargin={8}

@@ -172,7 +172,7 @@ export default function LivePage() {
 
   return (
     <div className='flex flex-col gap-4'>
-      <div className='font-bold'>
+      <div className='text-xl font-bold'>
         ラズパイからの映像を確認するサンプルページ
       </div>
       <div className='xl:flex gap-4'>
