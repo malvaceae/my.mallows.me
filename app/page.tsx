@@ -132,6 +132,7 @@ export default function HomePage() {
       const { data } = await client.models.SensorValue.list({
         thingName: outputs.custom.iot.thing.name,
         sortDirection: 'DESC',
+        limit: 1440,
         timestamp: {
           ge: startTime,
         },
