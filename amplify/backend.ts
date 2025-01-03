@@ -39,16 +39,27 @@ import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 // AWS CDK - IoT Certificate
 import { Certificate } from './constructs/iot/certificate';
 
+// AWS CDK - Custom Resources
+import {
+  AwsCustomResource,
+  AwsCustomResourcePolicy,
+  PhysicalResourceId,
+} from 'aws-cdk-lib/custom-resources';
+
 // 認証
 import { auth } from './auth/resource';
 
 // データ
 import { data } from './data/resource';
 
+// 関数
+import { putSensorValue } from './functions/put-sensor-value/resource';
+
 // Amplifyのバックエンドを作成
 const backend = defineBackend({
   auth,
   data,
+  putSensorValue,
 });
 
 // AmplifyのバックエンドIDを取得
@@ -206,44 +217,49 @@ new CfnPolicyPrincipalAttachment(iotStack, 'PolicyPrincipalAttachment', {
   principal: iotCertificate.arn,
 });
 
-// センサー測定値をPutするIAMロール
-const iotSensorValuePutRole = new Role(iotStack, 'SensorValuePutRole', {
-  assumedBy: new ServicePrincipal('iot.amazonaws.com'),
-});
-
-// センサー測定値をPutするポリシーを追加
-backend.data.resources.tables.SensorValue.grant(iotSensorValuePutRole, 'dynamodb:PutItem');
-
 // センサー測定値をPutするIoTルール
-new CfnTopicRule(iotStack, 'SensorValuePutTopicRule', {
+const iotSensorValuePutTopicRule = new CfnTopicRule(iotStack, 'SensorValuePutTopicRule', {
   topicRulePayload: {
     actions: [
       {
-        dynamoDBv2: {
-          putItem: {
-            tableName: backend.data.resources.tables.SensorValue.tableName,
-          },
-          roleArn: iotSensorValuePutRole.roleArn,
+        lambda: {
+          functionArn: backend.putSensorValue.resources.lambda.functionArn,
         },
       },
     ],
     awsIotSqlVersion: '2016-03-23',
-    sql: `
-      SELECT
-        {
-          'thingName': topic(1),
-          'timestamp': timestamp,
-          'temperature': temperature,
-          'pressure': pressure,
-          'humidity': humidity,
-          'createdAt': parse_time("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timestamp * 1000),
-          'updatedAt': parse_time("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timestamp * 1000),
-          '__typename': 'SensorValue'
-        }
-      FROM
-        '${iotThing.ref}/sensor-value/pub'
-    `.replace(/\s+/g, ' ').trim(),
+    sql: `SELECT topic(1) AS thingName, * FROM '${iotThing.ref}/sensor-value/pub'`,
   },
+});
+
+// センサー測定値をPutするIoTルールからアクセスする権限を関数に追加
+new AwsCustomResource(iotStack, 'AddSensorValuePutTopicRulePermission', {
+  onUpdate: {
+    service: 'lambda',
+    action: 'AddPermission',
+    parameters: {
+      FunctionName: backend.putSensorValue.resources.lambda.functionName,
+      StatementId: 'SensorValuePutTopicRulePermission',
+      Action: 'lambda:InvokeFunction',
+      Principal: 'iot.amazonaws.com',
+      SourceArn: iotSensorValuePutTopicRule.attrArn,
+    },
+    physicalResourceId: PhysicalResourceId.fromResponse('Statement'),
+  },
+  onDelete: {
+    service: 'lambda',
+    action: 'RemovePermission',
+    parameters: {
+      FunctionName: backend.putSensorValue.resources.lambda.functionName,
+      StatementId: 'SensorValuePutTopicRulePermission',
+    },
+  },
+  policy: AwsCustomResourcePolicy.fromSdkCalls({
+    resources: [
+      backend.putSensorValue.resources.lambda.functionArn,
+    ],
+  }),
+  installLatestAwsSdk: false,
 });
 
 // IoTスタックの情報を出力

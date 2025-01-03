@@ -5,6 +5,9 @@ import {
   defineData,
 } from '@aws-amplify/backend';
 
+// 関数
+import { putSensorValue } from '../functions/put-sensor-value/resource';
+
 // スキーマを定義
 const schema = a.schema({
   SensorValue: a.model({
@@ -18,7 +21,10 @@ const schema = a.schema({
     .authorization((allow) => [
       allow.authenticated(),
     ]),
-});
+})
+  .authorization((allow) => [
+    allow.resource(putSensorValue).to(['mutate']),
+  ]);
 
 // スキーマを公開
 export type Schema = ClientSchema<typeof schema>;

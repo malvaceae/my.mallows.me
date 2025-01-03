@@ -146,6 +146,25 @@ export default function HomePage() {
     })();
   }, [period]);
 
+  useEffect(() => {
+    // データの更新を監視
+    const sub = client.models.SensorValue.onCreate({
+      selectionSet: [
+        'timestamp',
+        'temperature',
+        'pressure',
+        'humidity',
+      ],
+    }).subscribe({
+      next(data) {
+        setSensorValues((prev) => [data, ...prev.filter(({ timestamp }) => timestamp >= Math.floor(Date.now() / 1000) - period.value)]);
+      },
+    });
+
+    // 終了時に監視を停止
+    return () => sub.unsubscribe();
+  }, [period]);
+
   return (
     <div className='flex flex-col gap-4'>
       <div className='flex items-center justify-between'>
@@ -264,7 +283,7 @@ export default function HomePage() {
                   dot={false}
                   stroke='var(--color-temperature)'
                   strokeWidth={2}
-                  type='natural'
+                  type='monotone'
                 />
               </LineChart>
             </ChartContainer>
@@ -315,7 +334,7 @@ export default function HomePage() {
                   fill='var(--color-pressure)'
                   stroke='var(--color-pressure)'
                   strokeWidth={2}
-                  type='natural'
+                  type='monotone'
                 />
               </AreaChart>
             </ChartContainer>
@@ -365,7 +384,7 @@ export default function HomePage() {
                   dot={false}
                   stroke='var(--color-humidity)'
                   strokeWidth={2}
-                  type='natural'
+                  type='monotone'
                 />
               </LineChart>
             </ChartContainer>
