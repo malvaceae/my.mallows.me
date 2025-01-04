@@ -75,11 +75,6 @@ const chartConfig: ChartConfig = {
   },
 };
 
-// 不快指数の計算
-const calcDiscomfortIndex = (t: number, h: number) => {
-  return .81 * t + .01 * h * (.99 * t - 14.3) + 46.3;
-};
-
 // 表示期間の一覧
 const periods = [
   {
@@ -104,13 +99,48 @@ const periods = [
   },
 ];
 
+// 日時を時間と分の文字列に変換
+const toHourAndMinute = (date: Date) => {
+  return date.toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+};
+
+// 不快指数の計算
+const calcDiscomfortIndex = (t: number, h: number) => {
+  return .81 * t + .01 * h * (.99 * t - 14.3) + 46.3;
+};
+
+// センサー測定値
+type SensorValue = Pick<Schema['SensorValue']['type'], 'timestamp' | 'temperature' | 'pressure' | 'humidity'>;
+
 // ホーム
 export default function HomePage() {
   // センサー測定値
-  const [sensorValues, setSensorValues] = useState<Pick<Schema['SensorValue']['type'], 'timestamp' | 'temperature' | 'pressure' | 'humidity'>[]>([]);
+  const [sensorValues, setSensorValues] = useState<SensorValue[]>([]);
 
   // 最新の気温・気圧・湿度
   const { temperature, pressure, humidity } = sensorValues[0] ?? {};
+
+  // 気温・気圧・湿度の一覧
+  const [temperatures, pressures, humidities] = [
+    sensorValues.map(({ temperature }) => temperature),
+    sensorValues.map(({ pressure }) => pressure),
+    sensorValues.map(({ humidity }) => humidity),
+  ];
+
+  // 気温の最小値・最大値
+  const temperatureMin = temperatures.length ? Math.min(...temperatures) : 0;
+  const temperatureMax = temperatures.length ? Math.max(...temperatures) : 0;
+
+  // 気圧の最小値・最大値
+  const pressureMin = pressures.length ? Math.min(...pressures) : 0;
+  const pressureMax = pressures.length ? Math.max(...pressures) : 0;
+
+  // 湿度の最小値・最大値
+  const humidityMin = humidities.length ? Math.min(...humidities) : 0;
+  const humidityMax = humidities.length ? Math.max(...humidities) : 0;
 
   // 表示期間
   const [period, setPeriod] = useState(periods[0]);
@@ -122,6 +152,19 @@ export default function HomePage() {
   const xTicks = [...Array(period.value / period.interval)].map((_, i) => {
     return (Math.floor(timestamp / period.interval) - i) * period.interval;
   });
+
+  // Y軸の目盛り
+  const yTicks = {
+    temperature: [...Array(Math.ceil(temperatureMax) - Math.floor(temperatureMin) + 1)].map((_, i) => {
+      return Math.ceil(temperatureMax) - i;
+    }),
+    pressure: [...Array(Math.ceil(pressureMax) - Math.floor(pressureMin) + 1)].map((_, i) => {
+      return Math.ceil(pressureMax) - i;
+    }),
+    humidity: [...Array(Math.ceil(humidityMax) - Math.floor(humidityMin) + 1)].map((_, i) => {
+      return Math.ceil(humidityMax) - i;
+    }),
+  };
 
   useEffect(() => {
     (async () => {
@@ -261,7 +304,7 @@ export default function HomePage() {
                   axisLine={false}
                   dataKey='timestamp'
                   domain={['dataMin', 'dataMax']}
-                  tickFormatter={(value) => new Date(value * 1000).toTimeString().slice(0, 5)}
+                  tickFormatter={(value) => toHourAndMinute(new Date(value * 1000))}
                   tickLine={false}
                   tickMargin={8}
                   ticks={xTicks}
@@ -270,13 +313,11 @@ export default function HomePage() {
                 <YAxis
                   axisLine={false}
                   dataKey='temperature'
-                  domain={([dataMin, dataMax]) => [
-                    Math.floor(dataMin) - 1,
-                    Math.ceil(dataMax) + 1,
-                  ]}
-                  tickFormatter={(value) => `${value.toFixed(2)} ℃`}
+                  domain={['dataMin', 'dataMax']}
+                  tickFormatter={(value) => `${Math.floor(value)} ℃`}
                   tickLine={false}
                   tickMargin={8}
+                  ticks={yTicks.temperature}
                 />
                 <ChartTooltip
                   content={<ChartTooltipContent hideLabel />}
@@ -311,7 +352,7 @@ export default function HomePage() {
                   axisLine={false}
                   dataKey='timestamp'
                   domain={['dataMin', 'dataMax']}
-                  tickFormatter={(value) => new Date(value * 1000).toTimeString().slice(0, 5)}
+                  tickFormatter={(value) => toHourAndMinute(new Date(value * 1000))}
                   tickLine={false}
                   tickMargin={8}
                   ticks={xTicks}
@@ -320,13 +361,11 @@ export default function HomePage() {
                 <YAxis
                   axisLine={false}
                   dataKey='pressure'
-                  domain={([dataMin, dataMax]) => [
-                    Math.floor(dataMin) - 1,
-                    Math.ceil(dataMax) + 1,
-                  ]}
-                  tickFormatter={(value) => `${value.toFixed(2)} hPa`}
+                  domain={['dataMin', 'dataMax']}
+                  tickFormatter={(value) => `${Math.floor(value)} hPa`}
                   tickLine={false}
                   tickMargin={8}
+                  ticks={yTicks.pressure}
                 />
                 <ChartTooltip
                   content={<ChartTooltipContent hideLabel />}
@@ -362,7 +401,7 @@ export default function HomePage() {
                   axisLine={false}
                   dataKey='timestamp'
                   domain={['dataMin', 'dataMax']}
-                  tickFormatter={(value) => new Date(value * 1000).toTimeString().slice(0, 5)}
+                  tickFormatter={(value) => toHourAndMinute(new Date(value * 1000))}
                   tickLine={false}
                   tickMargin={8}
                   ticks={xTicks}
@@ -371,13 +410,11 @@ export default function HomePage() {
                 <YAxis
                   axisLine={false}
                   dataKey='humidity'
-                  domain={([dataMin, dataMax]) => [
-                    Math.floor(dataMin) - 1,
-                    Math.ceil(dataMax) + 1,
-                  ]}
-                  tickFormatter={(value) => `${value.toFixed(2)} ％`}
+                  domain={['dataMin', 'dataMax']}
+                  tickFormatter={(value) => `${Math.floor(value)} ％`}
                   tickLine={false}
                   tickMargin={8}
+                  ticks={yTicks.humidity}
                 />
                 <ChartTooltip
                   content={<ChartTooltipContent hideLabel />}
