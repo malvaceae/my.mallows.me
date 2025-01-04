@@ -155,14 +155,14 @@ export default function HomePage() {
 
   // Y軸の目盛り
   const yTicks = {
-    temperature: [...Array(Math.ceil(temperatureMax) - Math.floor(temperatureMin) + 1)].map((_, i) => {
-      return Math.ceil(temperatureMax) - i;
+    temperature: [...Array(Math.ceil(temperatureMax) - Math.floor(temperatureMin) + 3)].map((_, i) => {
+      return Math.ceil(temperatureMax) + 1 - i;
     }),
-    pressure: [...Array(Math.ceil(pressureMax) - Math.floor(pressureMin) + 1)].map((_, i) => {
-      return Math.ceil(pressureMax) - i;
+    pressure: [...Array(Math.ceil(pressureMax) - Math.floor(pressureMin) + 3)].map((_, i) => {
+      return Math.ceil(pressureMax) + 1 - i;
     }),
-    humidity: [...Array(Math.ceil(humidityMax) - Math.floor(humidityMin) + 1)].map((_, i) => {
-      return Math.ceil(humidityMax) - i;
+    humidity: [...Array(Math.ceil(humidityMax) - Math.floor(humidityMin) + 3)].map((_, i) => {
+      return Math.ceil(humidityMax) + 1 - i;
     }),
   };
 
@@ -296,7 +296,7 @@ export default function HomePage() {
               <LineChart
                 accessibilityLayer
                 data={sensorValues}
-                margin={{ right: 12, left: 12 }}
+                margin={{ top: 12, right: 18 }}
                 maxBarSize={10}
               >
                 <CartesianGrid vertical={false} />
@@ -314,7 +314,7 @@ export default function HomePage() {
                   axisLine={false}
                   dataKey='temperature'
                   domain={['dataMin', 'dataMax']}
-                  tickFormatter={(value) => `${Math.floor(value)} ℃`}
+                  tickFormatter={(value) => `${value.toFixed(2)} ℃`}
                   tickLine={false}
                   tickMargin={8}
                   ticks={yTicks.temperature}
@@ -344,7 +344,7 @@ export default function HomePage() {
               <AreaChart
                 accessibilityLayer
                 data={sensorValues}
-                margin={{ right: 12, left: 12 }}
+                margin={{ top: 12, right: 18 }}
                 maxBarSize={10}
               >
                 <CartesianGrid vertical={false} />
@@ -362,7 +362,7 @@ export default function HomePage() {
                   axisLine={false}
                   dataKey='pressure'
                   domain={['dataMin', 'dataMax']}
-                  tickFormatter={(value) => `${Math.floor(value)} hPa`}
+                  tickFormatter={(value) => `${value.toFixed(2)} hPa`}
                   tickLine={false}
                   tickMargin={8}
                   ticks={yTicks.pressure}
@@ -393,7 +393,7 @@ export default function HomePage() {
               <LineChart
                 accessibilityLayer
                 data={sensorValues}
-                margin={{ right: 12, left: 12 }}
+                margin={{ top: 12, right: 18 }}
                 maxBarSize={10}
               >
                 <CartesianGrid vertical={false} />
@@ -411,7 +411,7 @@ export default function HomePage() {
                   axisLine={false}
                   dataKey='humidity'
                   domain={['dataMin', 'dataMax']}
-                  tickFormatter={(value) => `${Math.floor(value)} ％`}
+                  tickFormatter={(value) => `${value.toFixed(2)} ％`}
                   tickLine={false}
                   tickMargin={8}
                   ticks={yTicks.humidity}
