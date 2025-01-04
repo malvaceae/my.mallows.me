@@ -109,11 +109,14 @@ export default function HomePage() {
   // センサー測定値
   const [sensorValues, setSensorValues] = useState<Pick<Schema['SensorValue']['type'], 'timestamp' | 'temperature' | 'pressure' | 'humidity'>[]>([]);
 
-  // 最新のタイムスタンプ・気温・気圧・湿度
-  const { timestamp, temperature, pressure, humidity } = sensorValues[0] ?? {};
+  // 最新の気温・気圧・湿度
+  const { temperature, pressure, humidity } = sensorValues[0] ?? {};
 
   // 表示期間
   const [period, setPeriod] = useState(periods[0]);
+
+  // 現在時刻
+  const timestamp = Math.floor(Date.now() / 1000);
 
   // X軸の目盛り
   const xTicks = [...Array(period.value / period.interval)].map((_, i) => {
@@ -137,16 +140,14 @@ export default function HomePage() {
           'humidity',
         ],
         timestamp: {
-          ge: Math.floor(Date.now() / 1000) - period.value,
+          gt: timestamp - period.value,
         },
       });
 
       // センサー測定値を保持
       setSensorValues(data);
     })();
-  }, [period]);
 
-  useEffect(() => {
     // データの更新を監視
     const sub = client.models.SensorValue.onCreate({
       selectionSet: [
@@ -157,7 +158,9 @@ export default function HomePage() {
       ],
     }).subscribe({
       next(data) {
-        setSensorValues((prev) => [data, ...prev.filter(({ timestamp }) => timestamp >= Math.floor(Date.now() / 1000) - period.value)]);
+        setSensorValues((prev) => [data, ...prev.filter(({ timestamp }) => {
+          return timestamp > Math.floor(Date.now() / 1000) - period.value;
+        })]);
       },
     });
 
