@@ -204,12 +204,8 @@ export default function HomePage() {
       ],
     }).subscribe({
       next(data) {
-        // 現在時刻
-        const timestamp = Math.floor(Date.now() / 1000);
-
-        // センサー測定値を更新
-        setSensorValues((prev) => [...prev.filter((value) => {
-          return value.timestamp > timestamp - period.value;
+        setSensorValues((prev) => [...prev.filter(({ timestamp }) => {
+          return timestamp > data.timestamp - period.value;
         }), data]);
       },
     });
