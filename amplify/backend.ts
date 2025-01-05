@@ -33,18 +33,14 @@ import {
   CfnTopicRule,
 } from 'aws-cdk-lib/aws-iot';
 
+// AWS CDK - Lambda
+import { CfnPermission } from 'aws-cdk-lib/aws-lambda';
+
 // AWS CDK - Systems Manager
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 
 // AWS CDK - IoT Certificate
 import { Certificate } from './constructs/iot/certificate';
-
-// AWS CDK - Custom Resources
-import {
-  AwsCustomResource,
-  AwsCustomResourcePolicy,
-  PhysicalResourceId,
-} from 'aws-cdk-lib/custom-resources';
 
 // 認証
 import { auth } from './auth/resource';
@@ -232,34 +228,12 @@ const iotSensorValuePutTopicRule = new CfnTopicRule(iotStack, 'SensorValuePutTop
   },
 });
 
-// センサー測定値をPutするIoTルールからアクセスする権限を関数に追加
-new AwsCustomResource(iotStack, 'AddSensorValuePutTopicRulePermission', {
-  onUpdate: {
-    service: 'lambda',
-    action: 'AddPermission',
-    parameters: {
-      FunctionName: backend.putSensorValue.resources.lambda.functionName,
-      StatementId: 'SensorValuePutTopicRulePermission',
-      Action: 'lambda:InvokeFunction',
-      Principal: 'iot.amazonaws.com',
-      SourceArn: iotSensorValuePutTopicRule.attrArn,
-    },
-    physicalResourceId: PhysicalResourceId.fromResponse('Statement'),
-  },
-  onDelete: {
-    service: 'lambda',
-    action: 'RemovePermission',
-    parameters: {
-      FunctionName: backend.putSensorValue.resources.lambda.functionName,
-      StatementId: 'SensorValuePutTopicRulePermission',
-    },
-  },
-  policy: AwsCustomResourcePolicy.fromSdkCalls({
-    resources: [
-      backend.putSensorValue.resources.lambda.functionArn,
-    ],
-  }),
-  installLatestAwsSdk: false,
+// センサー測定値をPutするIoTルールから呼び出す権限を関数に追加
+new CfnPermission(iotStack, 'SensorValuePutTopicRulePermission', {
+  principal: 'iot.amazonaws.com',
+  action: 'lambda:InvokeFunction',
+  functionName: backend.putSensorValue.resources.lambda.functionName,
+  sourceArn: iotSensorValuePutTopicRule.attrArn,
 });
 
 // IoTスタックの情報を出力
