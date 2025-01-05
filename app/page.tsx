@@ -121,7 +121,7 @@ export default function HomePage() {
   const [sensorValues, setSensorValues] = useState<SensorValue[]>([]);
 
   // 最新の気温・気圧・湿度
-  const { temperature, pressure, humidity } = sensorValues[0] ?? {};
+  const { temperature, pressure, humidity } = sensorValues[sensorValues.length - 1] ?? {};
 
   // 気温・気圧・湿度の一覧
   const [temperatures, pressures, humidities] = [
@@ -131,16 +131,16 @@ export default function HomePage() {
   ];
 
   // 気温の最小値・最大値
-  const temperatureMin = temperatures.length ? Math.min(...temperatures) : 0;
-  const temperatureMax = temperatures.length ? Math.max(...temperatures) : 0;
+  const temperatureMin = Math.min(...temperatures);
+  const temperatureMax = Math.max(...temperatures);
 
   // 気圧の最小値・最大値
-  const pressureMin = pressures.length ? Math.min(...pressures) : 0;
-  const pressureMax = pressures.length ? Math.max(...pressures) : 0;
+  const pressureMin = Math.min(...pressures);
+  const pressureMax = Math.max(...pressures);
 
   // 湿度の最小値・最大値
-  const humidityMin = humidities.length ? Math.min(...humidities) : 0;
-  const humidityMax = humidities.length ? Math.max(...humidities) : 0;
+  const humidityMin = Math.min(...humidities);
+  const humidityMax = Math.max(...humidities);
 
   // 表示期間
   const [period, setPeriod] = useState(periods[0]);
@@ -155,15 +155,18 @@ export default function HomePage() {
 
   // Y軸の目盛り
   const yTicks = {
-    temperature: [...Array(Math.ceil(temperatureMax) - Math.floor(temperatureMin) + 3)].map((_, i) => {
-      return Math.ceil(temperatureMax) + 1 - i;
-    }),
-    pressure: [...Array(Math.ceil(pressureMax) - Math.floor(pressureMin) + 3)].map((_, i) => {
-      return Math.ceil(pressureMax) + 1 - i;
-    }),
-    humidity: [...Array(Math.ceil(humidityMax) - Math.floor(humidityMin) + 3)].map((_, i) => {
-      return Math.ceil(humidityMax) + 1 - i;
-    }),
+    temperature: Number.isFinite(temperatureMin) && Number.isFinite(temperatureMax)
+      ? [...Array(Math.ceil(temperatureMax) - Math.floor(temperatureMin) + 3)]
+        .map((_, i) => Math.ceil(temperatureMax) + 1 - i)
+      : [],
+    pressure: Number.isFinite(pressureMin) && Number.isFinite(pressureMax)
+      ? [...Array(Math.ceil(pressureMax) - Math.floor(pressureMin) + 3)]
+        .map((_, i) => Math.ceil(pressureMax) + 1 - i)
+      : [],
+    humidity: Number.isFinite(humidityMin) && Number.isFinite(humidityMax)
+      ? [...Array(Math.ceil(humidityMax) - Math.floor(humidityMin) + 3)]
+        .map((_, i) => Math.ceil(humidityMax) + 1 - i)
+      : [],
   };
 
   useEffect(() => {
@@ -187,11 +190,11 @@ export default function HomePage() {
         },
       });
 
-      // センサー測定値を保持
-      setSensorValues(data);
+      // センサー測定値をタイムスタンプの昇順で保持
+      setSensorValues(data.reverse());
     })();
 
-    // データの更新を監視
+    // データの追加を監視
     const sub = client.models.SensorValue.onCreate({
       selectionSet: [
         'timestamp',
@@ -201,9 +204,13 @@ export default function HomePage() {
       ],
     }).subscribe({
       next(data) {
-        setSensorValues((prev) => [data, ...prev.filter(({ timestamp }) => {
-          return timestamp > Math.floor(Date.now() / 1000) - period.value;
-        })]);
+        // 現在時刻
+        const timestamp = Math.floor(Date.now() / 1000);
+
+        // センサー測定値を更新
+        setSensorValues((prev) => [...prev.filter((value) => {
+          return value.timestamp > timestamp - period.value;
+        }), data]);
       },
     });
 
