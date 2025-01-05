@@ -1,7 +1,7 @@
 'use client';
 
-// Amplify - UI React
-import { useAuthenticator } from '@aws-amplify/ui-react';
+// Amplify - UI React Core
+import { useAuthenticator } from '@aws-amplify/ui-react-core';
 
 // Lucide React
 import {

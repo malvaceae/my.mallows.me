@@ -3,8 +3,8 @@
 // Amplify
 import { Amplify } from 'aws-amplify';
 
-// Amplify - UI React
-import { Authenticator as AmplifyAuthenticator } from '@aws-amplify/ui-react';
+// Amplify - UI React Core
+import { AuthenticatorProvider } from '@aws-amplify/ui-react-core';
 
 // ログインフォーム
 import { LoginForm } from '@/components/login-form';
@@ -22,8 +22,8 @@ export function Authenticator({
   children: React.ReactNode;
 }) {
   return (
-    <AmplifyAuthenticator.Provider>
+    <AuthenticatorProvider>
       <LoginForm>{children}</LoginForm>
-    </AmplifyAuthenticator.Provider>
+    </AuthenticatorProvider>
   );
 }
