@@ -10,7 +10,7 @@ import '@/app/globals.css';
 // テーマプロバイダー
 import { ThemeProvider } from '@/components/theme-provider';
 
-// 認証
+// 認証機能
 import { Authenticator } from '@/components/authenticator';
 
 // アプリレイアウト

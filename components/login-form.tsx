@@ -3,15 +3,11 @@
 // React
 import {
   useCallback,
-  useEffect,
   useState,
 } from 'react';
 
 // Amplify - UI React Core
-import {
-  useAuthenticator,
-  useAuthenticatorInitMachine,
-} from '@aws-amplify/ui-react-core';
+import { useAuthenticator } from '@aws-amplify/ui-react-core';
 
 // Lucide React
 import {
@@ -47,25 +43,11 @@ import { Label } from '@/components/ui/label';
 import { ThemeToggle } from '@/components/theme-toggle';
 
 // ログインフォーム
-export function LoginForm({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  // 認証
-  const {
-    authStatus,
-    error,
-    isPending,
-    route,
-    submitForm,
-    user,
-  } = useAuthenticator((context) => [
-    context.authStatus,
+export function LoginForm() {
+  // 認証状態
+  const { error, isPending, submitForm } = useAuthenticator((context) => [
     context.error,
     context.isPending,
-    context.route,
-    context.user,
   ]);
 
   // ユーザー名・パスワード
@@ -81,29 +63,6 @@ export function LoginForm({
       password,
     });
   }, [username, password]);
-
-  // 初期化
-  useAuthenticatorInitMachine({
-    initialState: 'signIn',
-  });
-
-  // ユーザー名・パスワードのリセット
-  useEffect(() => {
-    if (route === 'authenticated') {
-      setUsername('');
-      setPassword('');
-    }
-  }, [route]);
-
-  // 初期化前の場合は何も表示しない
-  if (authStatus === 'configuring') {
-    return null;
-  }
-
-  // 認証済みの場合は子要素を表示する
-  if (authStatus === 'authenticated') {
-    return user ? children : null;
-  }
 
   return (
     <div className='flex items-center justify-center min-h-svh'>
