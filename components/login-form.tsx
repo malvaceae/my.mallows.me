@@ -8,7 +8,10 @@ import {
 } from 'react';
 
 // Amplify - UI React Core
-import { useAuthenticator } from '@aws-amplify/ui-react-core';
+import {
+  useAuthenticator,
+  useAuthenticatorInitMachine,
+} from '@aws-amplify/ui-react-core';
 
 // Lucide React
 import {
@@ -53,12 +56,17 @@ export function LoginForm({
   const {
     authStatus,
     error,
-    initializeMachine,
     isPending,
     route,
     submitForm,
     user,
-  } = useAuthenticator();
+  } = useAuthenticator((context) => [
+    context.authStatus,
+    context.error,
+    context.isPending,
+    context.route,
+    context.user,
+  ]);
 
   // ユーザー名・パスワード
   const [username, setUsername] = useState('');
@@ -75,11 +83,12 @@ export function LoginForm({
   }, [username, password]);
 
   // 初期化
-  useEffect(() => {
-    if (route === 'setup') {
-      initializeMachine();
-    }
+  useAuthenticatorInitMachine({
+    initialState: 'signIn',
+  });
 
+  // ユーザー名・パスワードのリセット
+  useEffect(() => {
     if (route === 'authenticated') {
       setUsername('');
       setPassword('');
