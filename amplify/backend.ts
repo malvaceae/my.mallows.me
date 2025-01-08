@@ -11,9 +11,6 @@ import {
 // AWS CDK
 import { Arn } from 'aws-cdk-lib';
 
-// AWS CDK - Kinesis Video Streams
-import { CfnSignalingChannel } from 'aws-cdk-lib/aws-kinesisvideo';
-
 // AWS CDK - IAM
 import {
   Policy,
@@ -32,6 +29,9 @@ import {
   CfnThingPrincipalAttachment,
   CfnTopicRule,
 } from 'aws-cdk-lib/aws-iot';
+
+// AWS CDK - Kinesis Video Streams
+import { CfnSignalingChannel } from 'aws-cdk-lib/aws-kinesisvideo';
 
 // AWS CDK - Lambda
 import { CfnPermission } from 'aws-cdk-lib/aws-lambda';
