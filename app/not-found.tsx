@@ -13,16 +13,16 @@ export const metadata: Metadata = {
 export default function NotFound() {
   return (
     <div className='flex flex-1 justify-center'>
-      <div className='flex items-center gap-5'>
+      <div className='flex items-center gap-4'>
         <div className='text-2xl font-bold'>
           404
         </div>
         <Separator
-          className='h-12 bg-white/30'
+          className='h-12 bg-black/30 dark:bg-white/30'
           orientation='vertical'
         />
         <div className='text-sm'>
-          This page could not be found.
+          このページは存在しません。
         </div>
       </div>
     </div>
