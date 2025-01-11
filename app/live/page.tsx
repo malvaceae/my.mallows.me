@@ -40,16 +40,11 @@ export default function LivePage() {
   // videoタグ
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // WebRTCを開始
   useEffect(() => {
-    (async () => {
+    // WebRTCを開始
+    const webrtc = (async () => {
       // クレデンシャルを取得
       const { credentials } = await fetchAuthSession();
-
-      // クレデンシャルが存在しない場合は終了
-      if (!credentials) {
-        throw Error();
-      }
 
       // Kinesis Video Streamsクライアント
       const kinesisVideo = new KinesisVideoClient({
@@ -151,6 +146,11 @@ export default function LivePage() {
         peerConnection.addIceCandidate(candidate);
       });
 
+      // シグナリングチャネルでエラーが発生した場合
+      signalingClient.on('error', (error) => {
+        console.error(error);
+      });
+
       // ピア接続が生成したICE Candidateをシグナリングチャネルに送信する
       peerConnection.addEventListener('icecandidate', ({ candidate }) => {
         if (candidate) {
@@ -167,7 +167,17 @@ export default function LivePage() {
 
       // シグナリングチャネルに接続
       signalingClient.open();
+
+      // シグナリングチャネルを返却
+      return signalingClient;
     })();
+
+    // 終了時にシグナリングチャネルを切断
+    return () => {
+      webrtc.then((signalingClient) => {
+        signalingClient.close();
+      });
+    };
   }, []);
 
   return (
