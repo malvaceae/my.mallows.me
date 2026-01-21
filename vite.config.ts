@@ -42,4 +42,9 @@ export default defineConfig({
       runtime: 'nodejs22.x',
     },
   },
+  ssr: {
+    external: [
+      '@vercel/og',
+    ],
+  },
 });
