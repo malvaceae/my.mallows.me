@@ -1,6 +1,9 @@
 // Vite
 import { defineConfig } from 'vite';
 
+// rollup-plugin-copy
+import copy from 'rollup-plugin-copy';
+
 // Tailwind CSS
 import tailwindcss from '@tailwindcss/vite';
 
@@ -41,10 +44,21 @@ export default defineConfig({
     awsAmplify: {
       runtime: 'nodejs22.x',
     },
-  },
-  ssr: {
-    external: [
-      '@vercel/og',
-    ],
+    rollupConfig: {
+      plugins: [
+        copy({
+          targets: [
+            {
+              src: [
+                'node_modules/@vercel/og/dist/noto-sans-v27-latin-regular.ttf',
+                'node_modules/@vercel/og/dist/resvg.wasm',
+              ],
+              dest: '.amplify-hosting/compute/default/_chunks/_libs/@vercel',
+            },
+          ],
+          hook: 'writeBundle',
+        }),
+      ],
+    },
   },
 });
