@@ -8,6 +8,9 @@ import {
 // TanStack Router Devtools
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 
+// Amplify
+import { Amplify } from 'aws-amplify';
+
 // Global Styles
 import globalsCss from '@/styles/globals.css?url';
 
@@ -22,6 +25,12 @@ import { AppLayout } from '@/components/app-layout';
 
 // 404 Not Found
 import { NotFound } from '@/components/not-found';
+
+// Amplifyの設定
+import outputs from '~/amplify_outputs.json';
+
+// Amplifyの設定を適用
+Amplify.configure(outputs);
 
 // ルート
 export const Route = createRootRoute({
@@ -59,7 +68,11 @@ export const Route = createRootRoute({
 });
 
 // ルートドキュメント
-function RootDocument({ children }: { children: React.ReactNode }) {
+function RootDocument({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang='ja'>
       <head>

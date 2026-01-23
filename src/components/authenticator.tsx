@@ -1,6 +1,3 @@
-// Amplify
-import { Amplify } from 'aws-amplify';
-
 // Amplify - UI React Core
 import {
   AuthenticatorProvider,
@@ -10,12 +7,6 @@ import {
 
 // ログインフォーム
 import { LoginForm } from '@/components/login-form';
-
-// Amplifyの設定
-import outputs from '~/amplify_outputs.json';
-
-// Amplifyの設定を適用
-Amplify.configure(outputs);
 
 // 認証機能の初期化と画面表示
 function AuthenticatorInternal({
