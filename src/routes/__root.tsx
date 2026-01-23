@@ -11,6 +11,9 @@ import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 // Amplify
 import { Amplify } from 'aws-amplify';
 
+// Noto Sans JP
+import '@fontsource/noto-sans-jp';
+
 // Global Styles
 import globalsCss from '@/styles/globals.css?url';
 

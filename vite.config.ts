@@ -10,9 +10,6 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 // TanStack Start
 import { tanstackStart } from '@tanstack/react-start/plugin/vite';
 
-// Unfonts
-import Unfonts from 'unplugin-fonts/vite';
-
 // React
 import react from '@vitejs/plugin-react';
 
@@ -24,15 +21,6 @@ export default defineConfig({
     tailwindcss(),
     tsconfigPaths(),
     tanstackStart(),
-    Unfonts({
-      google: {
-        families: [
-          {
-            name: 'Noto Sans JP',
-          },
-        ],
-      },
-    }),
     react(),
     nitro(),
   ],
