@@ -64,15 +64,15 @@ const client = generateClient<Schema>();
 const chartConfig: ChartConfig = {
   temperature: {
     label: '気温',
-    color: 'hsl(var(--chart-1))',
+    color: 'var(--chart-1)',
   },
   pressure: {
     label: '気圧',
-    color: 'hsl(var(--chart-2))',
+    color: 'var(--chart-2)',
   },
   humidity: {
     label: '湿度',
-    color: 'hsl(var(--chart-3))',
+    color: 'var(--chart-3)',
   },
 };
 
