@@ -1,3 +1,6 @@
+// TanStack Router
+import { Link } from '@tanstack/react-router';
+
 // Amplify - UI React Core
 import { useAuthenticator } from '@aws-amplify/ui-react-core';
 
@@ -77,10 +80,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 {group.items.map((item, i) => (
                   <SidebarMenuItem key={i}>
                     <SidebarMenuButton asChild>
-                      <a href={item.url}>
+                      <Link to={item.url}>
                         <item.icon />
-                        <span>{item.title}</span>
-                      </a>
+                        {item.title}
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}

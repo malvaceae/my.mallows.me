@@ -2,7 +2,10 @@
 import { Fragment } from 'react';
 
 // TanStack Router
-import { useLocation } from '@tanstack/react-router';
+import {
+  Link,
+  useLocation,
+} from '@tanstack/react-router';
 
 // shadcn/ui - Breadcrumb
 import {
@@ -59,8 +62,10 @@ export function Breadcrumbs() {
             {i < items.length - 1 ? (
               <>
                 <BreadcrumbItem>
-                  <BreadcrumbLink href={item.url}>
-                    {item.title}
+                  <BreadcrumbLink asChild>
+                    <Link to={item.url}>
+                      {item.title}
+                    </Link>
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
