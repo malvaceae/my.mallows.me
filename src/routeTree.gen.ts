@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LiveIndexRouteImport } from './routes/live/index'
-import { Route as IconIndexRouteImport } from './routes/icon/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -23,39 +22,30 @@ const LiveIndexRoute = LiveIndexRouteImport.update({
   path: '/live/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IconIndexRoute = IconIndexRouteImport.update({
-  id: '/icon/',
-  path: '/icon/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/icon/': typeof IconIndexRoute
   '/live/': typeof LiveIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/icon': typeof IconIndexRoute
   '/live': typeof LiveIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/icon/': typeof IconIndexRoute
   '/live/': typeof LiveIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/icon/' | '/live/'
+  fullPaths: '/' | '/live/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/icon' | '/live'
-  id: '__root__' | '/' | '/icon/' | '/live/'
+  to: '/' | '/live'
+  id: '__root__' | '/' | '/live/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  IconIndexRoute: typeof IconIndexRoute
   LiveIndexRoute: typeof LiveIndexRoute
 }
 
@@ -75,19 +65,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LiveIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/icon/': {
-      id: '/icon/'
-      path: '/icon'
-      fullPath: '/icon/'
-      preLoaderRoute: typeof IconIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  IconIndexRoute: IconIndexRoute,
   LiveIndexRoute: LiveIndexRoute,
 }
 export const routeTree = rootRouteImport
