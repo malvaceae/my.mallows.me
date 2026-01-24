@@ -32,7 +32,7 @@ function AuthenticatorInternal({
 
   // 認証済みの場合は子要素を表示する
   if (authStatus === 'authenticated') {
-    return user ? children : null;
+    return user ? children : <LoginForm />;
   }
 
   return <LoginForm />;

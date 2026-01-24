@@ -1,6 +1,7 @@
 // React
 import {
   useCallback,
+  useMemo,
   useState,
 } from 'react';
 
@@ -43,10 +44,15 @@ import { ThemeToggle } from '@/components/theme-toggle';
 // ログインフォーム
 export function LoginForm() {
   // 認証状態
-  const { error, isPending, submitForm } = useAuthenticator((context) => [
+  const { authStatus, error, isPending, user, submitForm } = useAuthenticator((context) => [
+    context.authStatus,
     context.error,
     context.isPending,
+    context.user,
   ]);
+
+  // ログイン中
+  const isLoading = useMemo(() => authStatus === 'authenticated' && !user || isPending, [authStatus, isPending, user]);
 
   // ユーザー名・パスワード
   const [username, setUsername] = useState('');
@@ -106,9 +112,9 @@ export function LoginForm() {
                   </AlertDescription>
                 </Alert>
               )}
-              <Button type='submit' disabled={isPending}>
-                {isPending && <Loader2 className='animate-spin' />}
-                {isPending ? 'ログイン中' : 'ログイン'}
+              <Button type='submit' disabled={isLoading}>
+                {isLoading && <Loader2 className='animate-spin' />}
+                {isLoading ? 'ログイン中' : 'ログイン'}
               </Button>
             </div>
           </form>
