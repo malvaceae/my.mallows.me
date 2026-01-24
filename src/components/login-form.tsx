@@ -2,7 +2,6 @@
 import {
   useCallback,
   useMemo,
-  useState,
 } from 'react';
 
 // Amplify - UI React Core
@@ -54,19 +53,18 @@ export function LoginForm() {
   // ログイン中
   const isLoading = useMemo(() => authStatus === 'authenticated' && !user || isPending, [authStatus, isPending, user]);
 
-  // ユーザー名・パスワード
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-
   // ログイン
   const handleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const username = e.currentTarget.username.value;
+    const password = e.currentTarget.password.value;
 
     submitForm({
       username,
       password,
     });
-  }, [username, password, submitForm]);
+  }, [submitForm]);
 
   return (
     <div className='flex min-h-svh items-center justify-center'>
@@ -86,9 +84,7 @@ export function LoginForm() {
                 </Label>
                 <Input
                   id='username'
-                  value={username}
                   required
-                  onChange={(e) => setUsername(e.target.value)}
                 />
               </div>
               <div className='grid gap-2'>
@@ -98,9 +94,7 @@ export function LoginForm() {
                 <Input
                   id='password'
                   type='password'
-                  value={password}
                   required
-                  onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
               {error && (
