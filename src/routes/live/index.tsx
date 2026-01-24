@@ -200,7 +200,7 @@ function Live() {
       <div className='text-lg font-bold'>
         ラズパイからの映像を確認するサンプルページ
       </div>
-      <div className='xl:flex gap-4'>
+      <div className='gap-4 xl:flex'>
         <div className='xl:w-3/5'>
           <AspectRatio ratio={4 / 3}>
             <video

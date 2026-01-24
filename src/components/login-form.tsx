@@ -60,12 +60,12 @@ export function LoginForm() {
       username,
       password,
     });
-  }, [username, password]);
+  }, [username, password, submitForm]);
 
   return (
-    <div className='flex items-center justify-center min-h-svh'>
+    <div className='flex min-h-svh items-center justify-center'>
       <ThemeToggle className='absolute top-0 right-0 m-2' />
-      <Card className='w-full max-w-sm m-4'>
+      <Card className='m-4 w-full max-w-sm'>
         <CardHeader>
           <CardTitle className='text-2xl'>
             ログイン
@@ -99,7 +99,7 @@ export function LoginForm() {
               </div>
               {error && (
                 <Alert variant='destructive'>
-                  <AlertCircle className='w-4 h-4' />
+                  <AlertCircle className='h-4 w-4' />
                   <AlertTitle>エラー</AlertTitle>
                   <AlertDescription>
                     {error}

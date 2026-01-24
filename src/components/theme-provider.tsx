@@ -61,18 +61,22 @@ export function ThemeProvider({
   storageKey = 'theme',
 }: ThemeProviderProps) {
   // Theme State
-  const [theme, setTheme] = useState<Theme>(defaultTheme);
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window === 'undefined') {
+      return defaultTheme;
+    }
 
-  // Initialize theme state from localStorage.
-  useEffect(() => {
+    // Initialize theme state from localStorage.
     if (
       localStorage[storageKey] === 'system' ||
       localStorage[storageKey] === 'light' ||
       localStorage[storageKey] === 'dark'
     ) {
-      setTheme(localStorage[storageKey]);
+      return localStorage[storageKey];
     }
-  }, [storageKey]);
+
+    return defaultTheme;
+  });
 
   // Apply the theme to the document.
   useEffect(() => {

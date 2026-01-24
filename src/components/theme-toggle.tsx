@@ -34,8 +34,8 @@ export function ThemeToggle({ ...props }: React.ComponentProps<typeof Button>) {
       onClick={toggleTheme}
       {...props}
     >
-      <Sun className='dark:hidden w-[1.3rem] h-6' />
-      <Moon className='hidden dark:block w-5 h-5' />
+      <Sun className='h-6 w-[1.3rem] dark:hidden' />
+      <Moon className='hidden h-5 w-5 dark:block' />
       <span className='sr-only'>Toggle theme</span>
     </Button>
   );

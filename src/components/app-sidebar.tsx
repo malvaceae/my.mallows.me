@@ -64,8 +64,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   return (
     <Sidebar {...props}>
-      <SidebarHeader className='justify-center h-16 border-b'>
-        <div className='text-xl font-bold text-center'>
+      <SidebarHeader className='h-16 justify-center border-b'>
+        <div className='text-center text-xl font-bold'>
           my.mallows.me
         </div>
       </SidebarHeader>
@@ -92,7 +92,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroup>
         ))}
       </SidebarContent>
-      <SidebarFooter className='justify-center h-16 border-t'>
+      <SidebarFooter className='h-16 justify-center border-t'>
         <Button variant='secondary' onClick={signOut}>
           ログアウト
         </Button>

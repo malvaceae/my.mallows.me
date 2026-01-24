@@ -152,7 +152,7 @@ function Home() {
   const [period, setPeriod] = useState(periods[0]);
 
   // 現在時刻
-  const timestamp = Math.floor(Date.now() / 1000);
+  const [timestamp, setTimestamp] = useState(() => Math.floor(Date.now() / 1000));
 
   // X軸の目盛り
   const xTicks = [...Array(period.value / period.interval)].map((_, i) => {
@@ -179,6 +179,10 @@ function Home() {
     (async () => {
       // センサー測定値を初期化
       setSensorValues([]);
+
+      // 現在時刻を更新
+      const timestamp = Math.floor(Date.now() / 1000);
+      setTimestamp(timestamp);
 
       // センサー測定値をタイムスタンプの降順で取得
       const { data } = await client.models.SensorValue.list({
@@ -210,6 +214,11 @@ function Home() {
       ],
     }).subscribe({
       next(data) {
+        // 現在時刻を更新
+        const timestamp = Math.floor(Date.now() / 1000);
+        setTimestamp(timestamp);
+
+        // センサー測定値を更新
         setSensorValues((prev) => [...prev.filter(({ timestamp }) => {
           return timestamp > data.timestamp - period.value;
         }), data]);
@@ -245,7 +254,7 @@ function Home() {
             <CardTitle className='text-sm'>
               気温
             </CardTitle>
-            <ThermometerSun className='w-4 h-4 text-muted-foreground' />
+            <ThermometerSun className='h-4 w-4 text-muted-foreground' />
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>
@@ -258,7 +267,7 @@ function Home() {
             <CardTitle className='text-sm'>
               気圧
             </CardTitle>
-            <Gauge className='w-4 h-4 text-muted-foreground' />
+            <Gauge className='h-4 w-4 text-muted-foreground' />
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>
@@ -271,7 +280,7 @@ function Home() {
             <CardTitle className='text-sm'>
               湿度
             </CardTitle>
-            <Droplets className='w-4 h-4 text-muted-foreground' />
+            <Droplets className='h-4 w-4 text-muted-foreground' />
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>
@@ -284,7 +293,7 @@ function Home() {
             <CardTitle className='text-sm'>
               不快指数
             </CardTitle>
-            <Frown className='w-4 h-4 text-muted-foreground' />
+            <Frown className='h-4 w-4 text-muted-foreground' />
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>
@@ -293,7 +302,7 @@ function Home() {
           </CardContent>
         </Card>
       </div>
-      <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
+      <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
         <Card className='order-1'>
           <CardHeader>
             <CardTitle>

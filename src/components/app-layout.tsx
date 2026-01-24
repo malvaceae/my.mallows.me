@@ -27,16 +27,16 @@ export function AppLayout({
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className='flex shrink-0 gap-2 justify-between h-16 border-b'>
-          <div className='flex gap-2 items-center px-4'>
+        <header className='flex h-16 shrink-0 justify-between gap-2 border-b'>
+          <div className='flex items-center gap-2 px-4'>
             <SidebarTrigger className='-ml-1' />
-            <div className='h-4 mr-2'>
+            <div className='mr-2 h-4'>
               <Separator orientation='vertical' />
             </div>
             <Breadcrumbs />
           </div>
-          <div className='flex gap-2 items-center px-4'>
-            <ThemeToggle className='w-7 h-7 -mr-1' />
+          <div className='flex items-center gap-2 px-4'>
+            <ThemeToggle className='-mr-1 h-7 w-7' />
           </div>
         </header>
         <div className='flex flex-1 flex-col gap-4 p-4'>
