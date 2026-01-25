@@ -7,6 +7,9 @@ import {
   globalIgnores,
 } from 'eslint/config';
 
+// ESLint Compatibility Utilities
+import { includeIgnoreFile } from '@eslint/compat';
+
 // JavaScript
 import eslint from '@eslint/js';
 
@@ -40,9 +43,8 @@ export default defineConfig([
       },
     },
   },
+  includeIgnoreFile(resolve('.gitignore')),
   globalIgnores([
-    '.amplify/',
-    '.amplify-hosting/',
     'src/components/ui/',
     'src/hooks/use-mobile.ts',
     'src/lib/utils.ts',
