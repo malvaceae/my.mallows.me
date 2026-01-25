@@ -21,7 +21,7 @@ import { Amplify } from 'aws-amplify';
 import '@fontsource/noto-sans-jp';
 
 // Global Styles
-import globalsCss from '@/styles/globals.css?url';
+import '@/styles/globals.css';
 
 // テーマプロバイダー
 import { ThemeProvider } from '@/components/theme-provider';
@@ -65,10 +65,6 @@ export const Route = createRootRoute({
         },
       ],
       links: [
-        {
-          rel: 'stylesheet',
-          href: globalsCss,
-        },
         {
           rel: 'icon',
           href: '/favicon.ico',
