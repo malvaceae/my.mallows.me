@@ -81,7 +81,7 @@ function Live() {
 
       // シグナリングチャネルのエンドポイントが存在しない場合は終了
       if (!endpoints) {
-        throw Error();
+        throw new Error('Signaling channel endpoints not found.');
       }
 
       // プロトコル別のエンドポイントを取得
@@ -104,7 +104,7 @@ function Live() {
 
       // ICEサーバーの構成情報が存在しない場合は終了
       if (!iceServers) {
-        throw Error();
+        throw new Error('ICE server configuration not found.');
       }
 
       // STUNサーバーのエンドポイントを追加
@@ -177,6 +177,18 @@ function Live() {
       peerConnection.addEventListener('track', ({ streams }) => {
         if (videoRef.current && !videoRef.current.srcObject) {
           videoRef.current.srcObject = streams[0];
+        }
+      });
+
+      // ピア接続の状態が変化した場合
+      peerConnection.addEventListener('connectionstatechange', () => {
+        if (
+          peerConnection.connectionState === 'disconnected' ||
+          peerConnection.connectionState === 'failed'
+        ) {
+          console.error(peerConnection.connectionState);
+        } else {
+          console.debug(peerConnection.connectionState);
         }
       });
 

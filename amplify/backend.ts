@@ -63,7 +63,7 @@ const backendId = BackendIdentifierConversions.fromStackName(backend.stack.stack
 
 // AmplifyのバックエンドIDが存在しない場合は終了
 if (!backendId) {
-  throw Error();
+  throw new Error('Backend identifier not found.');
 }
 
 // CognitoのユーザープールとIDプール
