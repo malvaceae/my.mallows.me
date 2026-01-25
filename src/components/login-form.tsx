@@ -84,6 +84,7 @@ export function LoginForm() {
                 </Label>
                 <Input
                   id='username'
+                  autoComplete='username'
                   required
                 />
               </div>
@@ -94,6 +95,7 @@ export function LoginForm() {
                 <Input
                   id='password'
                   type='password'
+                  autoComplete='current-password'
                   required
                 />
               </div>
