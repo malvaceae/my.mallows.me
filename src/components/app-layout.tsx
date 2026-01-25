@@ -20,11 +20,13 @@ import { ThemeToggle } from '@/components/theme-toggle';
 // アプリレイアウト
 export function AppLayout({
   children,
+  sidebarOpen,
 }: {
   children: React.ReactNode;
+  sidebarOpen?: boolean;
 }) {
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={sidebarOpen}>
       <AppSidebar />
       <SidebarInset>
         <header className='flex h-16 shrink-0 justify-between gap-2 border-b'>

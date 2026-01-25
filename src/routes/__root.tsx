@@ -8,6 +8,12 @@ import {
 // TanStack Router Devtools
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 
+// TanStack Start
+import { createServerFn } from '@tanstack/react-start';
+
+// TanStack Start - Server
+import { getCookie } from '@tanstack/react-start/server';
+
 // Amplify
 import { Amplify } from 'aws-amplify';
 
@@ -34,6 +40,11 @@ import outputs from '~/amplify_outputs.json';
 
 // Amplifyの設定を適用
 Amplify.configure(outputs);
+
+// サイドバーの開閉状態を取得する
+const getSidebarState = createServerFn().handler(() => {
+  return getCookie('sidebar_state') ?? 'true';
+});
 
 // ルート
 export const Route = createRootRoute({
@@ -66,6 +77,9 @@ export const Route = createRootRoute({
       ],
     };
   },
+  loader: async () => ({
+    sidebarState: await getSidebarState(),
+  }),
   notFoundComponent: () => <NotFound />,
   shellComponent: RootDocument,
 });
@@ -76,6 +90,9 @@ function RootDocument({
 }: {
   children: React.ReactNode;
 }) {
+  // サイドバーの開閉状態
+  const { sidebarState } = Route.useLoaderData();
+
   return (
     <html lang='ja'>
       <head>
@@ -84,7 +101,7 @@ function RootDocument({
       <body className='font-[Noto_Sans_JP,ui-sans-serif,system-ui,sans-serif]'>
         <ThemeProvider>
           <Authenticator>
-            <AppLayout>
+            <AppLayout sidebarOpen={sidebarState === 'true'}>
               {children}
             </AppLayout>
           </Authenticator>
