@@ -1,5 +1,11 @@
+// React
+import { useEffect } from 'react';
+
 // TanStack Router
-import { Link } from '@tanstack/react-router';
+import {
+  Link,
+  useLocation,
+} from '@tanstack/react-router';
 
 // Amplify - UI React Core
 import { useAuthenticator } from '@aws-amplify/ui-react-core';
@@ -26,6 +32,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from '@/components/ui/sidebar';
 
 // メニュー項目
@@ -61,6 +68,19 @@ const groups = [
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   // 認証
   const { signOut } = useAuthenticator();
+
+  // サイドバー
+  const { setOpenMobile } = useSidebar();
+
+  // 現在のURLのパス名
+  const pathname = useLocation({
+    select({ pathname }) {
+      return pathname;
+    },
+  });
+
+  // URLが変更された場合はサイドバーを閉じる
+  useEffect(() => setOpenMobile(false), [setOpenMobile, pathname]);
 
   return (
     <Sidebar {...props}>
