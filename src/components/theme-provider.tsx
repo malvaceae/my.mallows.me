@@ -7,6 +7,9 @@ import {
   useState,
 } from 'react';
 
+// TanStack Router
+import { ScriptOnce } from '@tanstack/react-router';
+
 /**
  * Theme
  */
@@ -81,7 +84,7 @@ export function ThemeProvider({
   // Apply the theme to the document.
   useEffect(() => {
     if (theme === 'system') {
-      const mql = window.matchMedia('(prefers-color-scheme: dark)');
+      const mql = matchMedia('(prefers-color-scheme: dark)');
       document.documentElement.classList.toggle('light', !mql.matches);
       document.documentElement.classList.toggle('dark', mql.matches);
     } else {
@@ -100,6 +103,19 @@ export function ThemeProvider({
 
   return (
     <ThemeProviderContext.Provider value={value}>
+      <ScriptOnce>
+        {`
+          const theme = localStorage['${storageKey}'] ?? '${defaultTheme}';
+          if (theme === 'system') {
+            const mql = matchMedia('(prefers-color-scheme: dark)');
+            document.documentElement.classList.toggle('light', !mql.matches);
+            document.documentElement.classList.toggle('dark', mql.matches);
+          } else {
+            document.documentElement.classList.toggle('light', theme === 'light');
+            document.documentElement.classList.toggle('dark', theme === 'dark');
+          }
+        `}
+      </ScriptOnce>
       {children}
     </ThemeProviderContext.Provider>
   );

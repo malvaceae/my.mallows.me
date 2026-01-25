@@ -94,7 +94,7 @@ function RootDocument({
   const { sidebarState } = Route.useLoaderData();
 
   return (
-    <html lang='ja'>
+    <html lang='ja' suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>
