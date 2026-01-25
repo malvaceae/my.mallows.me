@@ -55,9 +55,35 @@ function Live() {
   // videoタグ
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  // ピア接続
+  const peerConnectionRef = useRef<RTCPeerConnection>(null);
+
+  // WebRTC Signalingクライアント
+  const signalingClientRef = useRef<SignalingClient>(null);
+
   useEffect(() => {
+    // アクティブかどうか
+    let isActive = true;
+
+    // 接続をクリーンアップ
+    const cleanup = () => {
+      isActive = false;
+
+      // シグナリングチャネルを切断
+      if (signalingClientRef.current) {
+        signalingClientRef.current.close();
+        signalingClientRef.current = null;
+      }
+
+      // ピア接続を切断
+      if (peerConnectionRef.current) {
+        peerConnectionRef.current.close();
+        peerConnectionRef.current = null;
+      }
+    };
+
     // WebRTCを開始
-    const webrtc = (async () => {
+    (async () => {
       // クレデンシャルを取得
       const { credentials } = await fetchAuthSession();
 
@@ -114,97 +140,97 @@ function Live() {
         ],
       });
 
-      // RTCPeerConnectionを作成
-      const peerConnection = new RTCPeerConnection({
-        iceServers: iceServers.map((iceServer) => ({
-          urls: iceServer.Uris ?? [],
-          credential: iceServer.Password,
-          username: iceServer.Username,
-        })),
-      });
-
-      // WebRTC Signalingクライアント
-      const signalingClient = new SignalingClient({
-        channelARN: outputs.custom.iot.signaling_channel.arn,
-        channelEndpoint: endpointsByProtocol.WSS,
-        credentials,
-        region: outputs.custom.iot.aws_region,
-        role: Role.VIEWER,
-        clientId: Math.random().toString(36).substring(2).toUpperCase(),
-        systemClockOffset: kinesisVideo.config.systemClockOffset,
-      });
-
-      // シグナリングチャネルに接続した場合
-      signalingClient.on('open', async () => {
-        // SDPオファーを作成
-        const offer = await peerConnection.createOffer({
-          offerToReceiveAudio: true,
-          offerToReceiveVideo: true,
+      // 接続処理
+      const connect = () => {
+        // ピア接続
+        const peerConnection = peerConnectionRef.current = new RTCPeerConnection({
+          iceServers: iceServers.map((iceServer) => ({
+            urls: iceServer.Uris ?? [],
+            credential: iceServer.Password,
+            username: iceServer.Username,
+          })),
         });
 
-        // SDPオファーをピア接続に登録
-        await peerConnection.setLocalDescription(offer);
+        // WebRTC Signalingクライアント
+        const signalingClient = signalingClientRef.current = new SignalingClient({
+          channelARN: outputs.custom.iot.signaling_channel.arn,
+          channelEndpoint: endpointsByProtocol.WSS,
+          credentials,
+          region: outputs.custom.iot.aws_region,
+          role: Role.VIEWER,
+          clientId: Math.random().toString(36).substring(2).toUpperCase(),
+          systemClockOffset: kinesisVideo.config.systemClockOffset,
+        });
 
-        // SDPオファーをシグナリングチャネルに送信
-        if (peerConnection.localDescription) {
-          signalingClient.sendSdpOffer(peerConnection.localDescription);
-        }
-      });
+        // シグナリングチャネルに接続した場合
+        signalingClient.on('open', async () => {
+          // SDPオファーを作成
+          const offer = await peerConnection.createOffer({
+            offerToReceiveAudio: true,
+            offerToReceiveVideo: true,
+          });
 
-      // SDPアンサーを受信した場合、ピア接続に登録する
-      signalingClient.on('sdpAnswer', (answer) => {
-        peerConnection.setRemoteDescription(answer);
-      });
+          // SDPオファーをピア接続に登録
+          await peerConnection.setLocalDescription(offer);
 
-      // ICE Candidateを受信した場合、ピア接続に登録する
-      signalingClient.on('iceCandidate', (candidate) => {
-        peerConnection.addIceCandidate(candidate);
-      });
+          // SDPオファーをシグナリングチャネルに送信
+          if (peerConnection.localDescription) {
+            signalingClient.sendSdpOffer(peerConnection.localDescription);
+          }
+        });
 
-      // シグナリングチャネルでエラーが発生した場合
-      signalingClient.on('error', (error) => {
-        console.error(error);
-      });
+        // SDPアンサーを受信した場合はピア接続に登録する
+        signalingClient.on('sdpAnswer', (answer) => {
+          peerConnection.setRemoteDescription(answer);
+        });
 
-      // ピア接続が生成したICE Candidateをシグナリングチャネルに送信する
-      peerConnection.addEventListener('icecandidate', ({ candidate }) => {
-        if (candidate) {
-          signalingClient.sendIceCandidate(candidate);
-        }
-      });
+        // ICE Candidateを受信した場合はピア接続に登録する
+        signalingClient.on('iceCandidate', (candidate) => {
+          peerConnection.addIceCandidate(candidate);
+        });
 
-      // 映像や音声のトラックをvideoタグに追加する
-      peerConnection.addEventListener('track', ({ streams }) => {
-        if (videoRef.current && !videoRef.current.srcObject) {
-          videoRef.current.srcObject = streams[0];
-        }
-      });
+        // シグナリングチャネルでエラーが発生した場合
+        signalingClient.on('error', (error) => {
+          console.error(error);
+        });
 
-      // ピア接続の状態が変化した場合
-      peerConnection.addEventListener('connectionstatechange', () => {
-        if (
-          peerConnection.connectionState === 'disconnected' ||
-          peerConnection.connectionState === 'failed'
-        ) {
-          console.error(peerConnection.connectionState);
-        } else {
-          console.debug(peerConnection.connectionState);
-        }
-      });
+        // ピア接続が生成したICE Candidateをシグナリングチャネルに送信する
+        peerConnection.addEventListener('icecandidate', ({ candidate }) => {
+          if (candidate) {
+            signalingClient.sendIceCandidate(candidate);
+          }
+        });
 
-      // シグナリングチャネルに接続
-      signalingClient.open();
+        // 映像や音声のトラックをvideoタグに追加する
+        peerConnection.addEventListener('track', ({ streams }) => {
+          if (videoRef.current) {
+            videoRef.current.srcObject = streams[0];
+          }
+        });
 
-      // シグナリングチャネルを返却
-      return signalingClient;
+        // ピア接続が切断された場合は再接続する
+        peerConnection.addEventListener('connectionstatechange', () => {
+          if (
+            peerConnection.connectionState === 'disconnected' ||
+            peerConnection.connectionState === 'failed'
+          ) {
+            cleanup();
+            connect();
+          }
+        });
+
+        // シグナリングチャネルに接続
+        signalingClient.open();
+      };
+
+      // アクティブな場合は接続を開始
+      if (isActive) {
+        connect();
+      }
     })();
 
-    // 終了時にシグナリングチャネルを切断
-    return () => {
-      webrtc.then((signalingClient) => {
-        signalingClient.close();
-      });
-    };
+    // 終了時にクリーンアップ
+    return cleanup;
   }, []);
 
   return (
@@ -217,7 +243,7 @@ function Live() {
           <AspectRatio ratio={4 / 3}>
             <video
               ref={videoRef}
-              className='h-full rounded-xl'
+              className='h-full w-full rounded-xl [&::-webkit-media-controls-timeline]:hidden'
               autoPlay
               controls
               muted
