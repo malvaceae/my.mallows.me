@@ -105,15 +105,19 @@ export function ThemeProvider({
     <ThemeProviderContext.Provider value={value}>
       <ScriptOnce>
         {`
-          const theme = localStorage['${storageKey}'] ?? '${defaultTheme}';
-          if (theme === 'system') {
-            const mql = matchMedia('(prefers-color-scheme: dark)');
-            document.documentElement.classList.toggle('light', !mql.matches);
-            document.documentElement.classList.toggle('dark', mql.matches);
-          } else {
-            document.documentElement.classList.toggle('light', theme === 'light');
-            document.documentElement.classList.toggle('dark', theme === 'dark');
-          }
+          (() => {
+            const storageKey = ${JSON.stringify(storageKey)};
+            const defaultTheme = ${JSON.stringify(defaultTheme)};
+            const theme = localStorage[storageKey] ?? defaultTheme;
+            if (theme === 'system') {
+              const mql = matchMedia('(prefers-color-scheme: dark)');
+              document.documentElement.classList.toggle('light', !mql.matches);
+              document.documentElement.classList.toggle('dark', mql.matches);
+            } else {
+              document.documentElement.classList.toggle('light', theme === 'light');
+              document.documentElement.classList.toggle('dark', theme === 'dark');
+            }
+          })();
         `}
       </ScriptOnce>
       {children}
