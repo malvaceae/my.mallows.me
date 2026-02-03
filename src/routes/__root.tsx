@@ -48,31 +48,29 @@ const getSidebarState = createServerFn().handler(() => {
 
 // ルート
 export const Route = createRootRoute({
-  head({ match }) {
-    return {
-      meta: [
-        {
-          charSet: 'utf-8',
-        },
-        {
-          name: 'viewport',
-          content: 'width=device-width, initial-scale=1',
-        },
-        {
-          title: match.globalNotFound || match.status === 'notFound' ?
-            '404 Not Found | my.mallows.me' :
-            'my.mallows.me',
-        },
-      ],
-      links: [
-        {
-          rel: 'icon',
-          href: '/favicon.ico',
-          type: 'image/x-icon',
-        },
-      ],
-    };
-  },
+  head: ({ match }) => ({
+    meta: [
+      {
+        charSet: 'utf-8',
+      },
+      {
+        name: 'viewport',
+        content: 'width=device-width, initial-scale=1',
+      },
+      {
+        title: match.globalNotFound || match.status === 'notFound' ?
+          '404 Not Found | my.mallows.me' :
+          'my.mallows.me',
+      },
+    ],
+    links: [
+      {
+        rel: 'icon',
+        href: '/favicon.ico',
+        type: 'image/x-icon',
+      },
+    ],
+  }),
   loader: async () => ({
     sidebarState: await getSidebarState(),
   }),

@@ -38,15 +38,13 @@ import outputs from '~/amplify_outputs.json';
 
 // ルート
 export const Route = createFileRoute('/live/')({
-  head() {
-    return {
-      meta: [
-        {
-          title: 'ライブストリーミング | my.mallows.me',
-        },
-      ],
-    };
-  },
+  head: () => ({
+    meta: [
+      {
+        title: 'ライブストリーミング | my.mallows.me',
+      },
+    ],
+  }),
   component: Live,
 });
 
