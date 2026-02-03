@@ -1,75 +1,85 @@
 // React
 import {
   createContext,
-  useContext,
+  use,
   useEffect,
   useMemo,
   useState,
 } from 'react';
 
-// TanStack Router
-import { ScriptOnce } from '@tanstack/react-router';
+// 関数版ScriptOnce
+import { FunctionOnce } from '@/components/function-once';
 
 /**
- * Theme
+ * 解決済みテーマ
  */
-type Theme = 'system' | 'light' | 'dark';
+type ResolvedTheme = 'light' | 'dark';
 
 /**
- * Theme Provider State
+ * テーマ
+ */
+type Theme = ResolvedTheme | 'system';
+
+/**
+ * テーマプロバイダーの状態
  */
 interface ThemeProviderState {
   /**
-   * Theme
+   * テーマ
    */
   readonly theme: Theme;
 
   /**
-   * Set the theme.
+   * 解決済みテーマ
+   */
+  readonly resolvedTheme: ResolvedTheme;
+
+  /**
+   * テーマを設定する
    */
   setTheme(theme: Theme): void;
 }
 
 /**
- * Theme Provider Context
+ * テーマプロバイダーのコンテキスト
  */
 const ThemeProviderContext = createContext<ThemeProviderState | undefined>(undefined);
 
 /**
- * Theme Provider Properties
+ * テーマプロバイダーのプロパティ
  */
 export interface ThemeProviderProps {
   /**
-   * Child Components
+   * 子コンポーネント
    */
   readonly children: React.ReactNode;
 
   /**
-   * Default Theme
+   * デフォルトテーマ
    */
   readonly defaultTheme?: Theme;
 
   /**
-   * Local Storage Key
+   * localStorageのキー
    */
   readonly storageKey?: string;
 }
 
 /**
- * Provide theme state to child components.
+ * テーマプロバイダー
  */
 export function ThemeProvider({
   children,
   defaultTheme = 'system',
   storageKey = 'theme',
 }: ThemeProviderProps) {
-  // Theme State
+  // テーマ
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window === 'undefined') {
       return defaultTheme;
     }
 
-    // Initialize theme state from localStorage.
+    // localStorageからテーマを復元する
     if (
       localStorage[storageKey] === 'system' ||
       localStorage[storageKey] === 'light' ||
@@ -81,55 +91,79 @@ export function ThemeProvider({
     return defaultTheme;
   });
 
-  // Apply the theme to the document.
+  // 解決済みテーマ
+  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>('light');
+
+  // テーマを適用し、システムテーマの変更を監視する
   useEffect(() => {
-    if (theme === 'system') {
-      const mql = matchMedia('(prefers-color-scheme: dark)');
-      document.documentElement.classList.toggle('light', !mql.matches);
-      document.documentElement.classList.toggle('dark', mql.matches);
-    } else {
-      document.documentElement.classList.toggle('light', theme === 'light');
-      document.documentElement.classList.toggle('dark', theme === 'dark');
-    }
+    const rootClasses = document.documentElement.classList;
+    const mql = matchMedia('(prefers-color-scheme: dark)');
+
+    const updateTheme = () => {
+      if (theme === 'system') {
+        setResolvedTheme(mql.matches ? 'dark' : 'light');
+        rootClasses.toggle('light', !mql.matches);
+        rootClasses.toggle('dark', mql.matches);
+      } else {
+        setResolvedTheme(theme);
+        rootClasses.toggle('light', theme === 'light');
+        rootClasses.toggle('dark', theme === 'dark');
+      }
+    };
+
+    // 現在のテーマを反映する
+    updateTheme();
+
+    // システムテーマの変更を監視する
+    mql.addEventListener('change', updateTheme);
+
+    // 監視を解除する
+    return () => mql.removeEventListener('change', updateTheme);
   }, [theme]);
 
-  // Theme Provider Value
+  // コンテキスト値
   const value = useMemo(() => ({
     theme,
+    resolvedTheme,
     setTheme(theme: Theme) {
       setTheme(localStorage[storageKey] = theme);
     },
-  }), [theme, storageKey]);
+  }), [
+    theme,
+    resolvedTheme,
+    storageKey,
+  ]);
 
   return (
-    <ThemeProviderContext.Provider value={value}>
-      <ScriptOnce>
-        {`
-          (() => {
-            const storageKey = ${JSON.stringify(storageKey)};
-            const defaultTheme = ${JSON.stringify(defaultTheme)};
-            const theme = localStorage[storageKey] ?? defaultTheme;
-            if (theme === 'system') {
-              const mql = matchMedia('(prefers-color-scheme: dark)');
-              document.documentElement.classList.toggle('light', !mql.matches);
-              document.documentElement.classList.toggle('dark', mql.matches);
-            } else {
-              document.documentElement.classList.toggle('light', theme === 'light');
-              document.documentElement.classList.toggle('dark', theme === 'dark');
-            }
-          })();
-        `}
-      </ScriptOnce>
+    <ThemeProviderContext value={value}>
+      <FunctionOnce
+        defaultTheme={defaultTheme}
+        storageKey={storageKey}
+      >
+        {({ defaultTheme, storageKey }) => {
+          const theme = localStorage[storageKey] ?? defaultTheme;
+          const rootClasses = document.documentElement.classList;
+          const mql = matchMedia('(prefers-color-scheme: dark)');
+
+          if (theme === 'system') {
+            rootClasses.toggle('light', !mql.matches);
+            rootClasses.toggle('dark', mql.matches);
+          } else {
+            rootClasses.toggle('light', theme === 'light');
+            rootClasses.toggle('dark', theme === 'dark');
+          }
+        }}
+      </FunctionOnce>
       {children}
-    </ThemeProviderContext.Provider>
+    </ThemeProviderContext>
   );
 }
 
 /**
- * Return the theme context.
+ * テーマを取得する
  */
 export const useTheme = () => {
-  const context = useContext(ThemeProviderContext);
+  const context = use(ThemeProviderContext);
 
   if (context === undefined) {
     throw new Error('useTheme must be used within a ThemeProvider');

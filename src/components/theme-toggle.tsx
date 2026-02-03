@@ -16,16 +16,16 @@ import { useTheme } from '@/components/theme-provider';
 // テーマ切替ボタン
 export function ThemeToggle({ ...props }: React.ComponentProps<typeof Button>) {
   // テーマ
-  const { setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
 
   // テーマ切替
   const toggleTheme = useCallback(() => {
-    if (document.documentElement.classList.contains('dark')) {
+    if (resolvedTheme === 'dark') {
       setTheme('light');
     } else {
       setTheme('dark');
     }
-  }, [setTheme]);
+  }, [resolvedTheme, setTheme]);
 
   return (
     <Button
