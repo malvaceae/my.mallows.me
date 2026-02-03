@@ -37,7 +37,7 @@ interface ThemeProviderState {
   /**
    * テーマを設定する
    */
-  setTheme(theme: Theme): void;
+  setTheme: (theme: Theme) => void;
 }
 
 /**
