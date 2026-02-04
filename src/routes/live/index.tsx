@@ -233,7 +233,7 @@ function Live() {
 
   return (
     <div className='flex flex-col gap-4'>
-      <div className='text-lg font-bold'>
+      <div className='truncate text-lg font-bold'>
         ラズパイからの映像を確認するサンプルページ
       </div>
       <div className='gap-4 xl:flex'>
