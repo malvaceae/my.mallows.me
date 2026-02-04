@@ -38,7 +38,7 @@ export function AppLayout({
             <Breadcrumbs />
           </div>
           <div className='flex items-center gap-2 px-4'>
-            <ThemeToggle className='-mr-1 h-7 w-7' />
+            <ThemeToggle className='-mr-1 size-7' />
           </div>
         </header>
         <div className='flex flex-1 flex-col gap-4 p-4'>

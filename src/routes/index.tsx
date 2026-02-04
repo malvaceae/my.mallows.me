@@ -254,7 +254,7 @@ function Home() {
             <CardTitle className='text-sm'>
               気温
             </CardTitle>
-            <ThermometerSun className='h-4 w-4 text-muted-foreground' />
+            <ThermometerSun className='size-4 text-muted-foreground' />
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>
@@ -267,7 +267,7 @@ function Home() {
             <CardTitle className='text-sm'>
               気圧
             </CardTitle>
-            <Gauge className='h-4 w-4 text-muted-foreground' />
+            <Gauge className='size-4 text-muted-foreground' />
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>
@@ -280,7 +280,7 @@ function Home() {
             <CardTitle className='text-sm'>
               湿度
             </CardTitle>
-            <Droplets className='h-4 w-4 text-muted-foreground' />
+            <Droplets className='size-4 text-muted-foreground' />
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>
@@ -293,7 +293,7 @@ function Home() {
             <CardTitle className='text-sm'>
               不快指数
             </CardTitle>
-            <Frown className='h-4 w-4 text-muted-foreground' />
+            <Frown className='size-4 text-muted-foreground' />
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>

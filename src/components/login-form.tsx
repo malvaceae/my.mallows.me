@@ -101,7 +101,7 @@ export function LoginForm() {
               </div>
               {error && (
                 <Alert variant='destructive'>
-                  <AlertCircle className='h-4 w-4' />
+                  <AlertCircle />
                   <AlertTitle>エラー</AlertTitle>
                   <AlertDescription>
                     {error}
