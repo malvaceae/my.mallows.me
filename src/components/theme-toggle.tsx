@@ -1,8 +1,7 @@
-// React
-import { useCallback } from 'react';
-
 // Lucide React
 import {
+  Check,
+  Monitor,
   Moon,
   Sun,
 } from 'lucide-react';
@@ -10,33 +9,51 @@ import {
 // shadcn/ui - Button
 import { Button } from '@/components/ui/button';
 
-// テーマプロバイダー
+// shadcn/ui - Dropdown Menu
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+
+// テーマ
 import { useTheme } from '@/components/theme-provider';
 
 // テーマ切替ボタン
-export function ThemeToggle({ ...props }: React.ComponentProps<typeof Button>) {
+export function ThemeToggle(props: React.ComponentProps<typeof Button>) {
   // テーマ
-  const { resolvedTheme, setTheme } = useTheme();
-
-  // テーマ切替
-  const toggleTheme = useCallback(() => {
-    if (resolvedTheme === 'dark') {
-      setTheme('light');
-    } else {
-      setTheme('dark');
-    }
-  }, [resolvedTheme, setTheme]);
+  const { theme, resolvedTheme, setTheme } = useTheme();
 
   return (
-    <Button
-      size='icon'
-      variant='ghost'
-      onClick={toggleTheme}
-      {...props}
-    >
-      <Sun className='h-6 w-[1.3rem] dark:hidden' />
-      <Moon className='hidden h-5 w-5 dark:block' />
-      <span className='sr-only'>Toggle theme</span>
-    </Button>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          size='icon'
+          variant='ghost'
+          {...props}
+        >
+          {resolvedTheme === 'dark' ? <Moon /> : <Sun />}
+          <span className='sr-only'>Toggle theme</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align='end'>
+        <DropdownMenuItem onClick={() => setTheme('light')}>
+          <Sun />
+          ライト
+          {theme === 'light' && <Check className='ml-auto' />}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme('dark')}>
+          <Moon />
+          ダーク
+          {theme === 'dark' && <Check className='ml-auto' />}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme('system')}>
+          <Monitor />
+          システム
+          {theme === 'system' && <Check className='ml-auto' />}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
