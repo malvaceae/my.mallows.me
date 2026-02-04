@@ -8,7 +8,7 @@ export function FunctionOnce<T extends Record<string, unknown>>({
   children,
   ...props
 }: T & {
-  children: (params: Omit<T, 'children'>) => void;
+  children: (props: Omit<T, 'children'>) => void;
 }) {
   return (
     <ScriptOnce>
