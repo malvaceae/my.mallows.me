@@ -7,6 +7,9 @@ import {
 // Amplify - UI React Core
 import { useAuthenticator } from '@aws-amplify/ui-react-core';
 
+// Amplify - Utils
+import { I18n } from 'aws-amplify/utils';
+
 // Lucide React
 import {
   AlertCircle,
@@ -104,7 +107,7 @@ export function LoginForm() {
                   <AlertCircle />
                   <AlertTitle>エラー</AlertTitle>
                   <AlertDescription>
-                    {error}
+                    {I18n.get(error)}
                   </AlertDescription>
                 </Alert>
               )}

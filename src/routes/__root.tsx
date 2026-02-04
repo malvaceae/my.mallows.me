@@ -17,6 +17,12 @@ import { getCookie } from '@tanstack/react-start/server';
 // Amplify
 import { Amplify } from 'aws-amplify';
 
+// Amplify - UI
+import { translations } from '@aws-amplify/ui';
+
+// Amplify - Utils
+import { I18n } from 'aws-amplify/utils';
+
 // Noto Sans JP
 import '@fontsource/noto-sans-jp';
 
@@ -40,6 +46,10 @@ import outputs from '~/amplify_outputs.json';
 
 // Amplifyの設定を適用
 Amplify.configure(outputs);
+
+// Amplifyの翻訳を適用
+I18n.putVocabularies(translations);
+I18n.setLanguage('ja');
 
 // サイドバーの開閉状態を取得する
 const getSidebarState = createServerFn().handler(() => {
