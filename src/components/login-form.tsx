@@ -57,7 +57,7 @@ export function LoginForm() {
   const isLoading = useMemo(() => authStatus === 'authenticated' && !user || isPending, [authStatus, isPending, user]);
 
   // ログイン
-  const handleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = useCallback((e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const username = e.currentTarget.username.value;
