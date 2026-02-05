@@ -80,6 +80,12 @@ export const Route = createRootRoute({
         type: 'image/x-icon',
       },
     ],
+    scripts: import.meta.env.DEV ? [
+      {
+        src: 'https://unpkg.com/react-scan/dist/auto.global.js',
+        crossOrigin: 'anonymous',
+      },
+    ] : [],
   }),
   loader: async () => ({
     sidebarState: await getSidebarState(),
@@ -110,7 +116,15 @@ function RootDocument({
             </AppLayout>
           </Authenticator>
         </ThemeProvider>
-        <TanStackRouterDevtools position='bottom-right' />
+        <TanStackRouterDevtools
+          position='bottom-right'
+          toggleButtonProps={{
+            style: {
+              bottom: 'calc(var(--tsrd-font-size) * 4)',
+              right: 'calc(var(--tsrd-font-size) * 1.5)',
+            },
+          }}
+        />
         <Scripts />
       </body>
     </html>
